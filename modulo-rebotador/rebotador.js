@@ -20,6 +20,7 @@ function cargarExcel(){
   })).filter(x=>x.chasis);
   cargarSelectores();
   alert("Excel cargado");
+  document.getElementById("nombreArchivo").textContent = "Cargado";
  };
  r.readAsArrayBuffer(f);
 }
@@ -49,4 +50,11 @@ function iniciarScanner(){
  document.getElementById("reader").classList.add("activo");
  scanner=new Html5Qrcode("reader");
  scanner.start({facingMode:"environment"},{fps:10,qrbox:250},c=>{scanner.stop();procesar(c);});
+}
+function mostrarArchivo(input) {
+    const texto = document.getElementById("nombreArchivo");
+
+    if (input.files.length > 0) {
+        texto.textContent = input.files[0].name;
+    }
 }
