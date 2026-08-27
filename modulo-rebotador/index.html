@@ -12,8 +12,11 @@
 <div class="container">
 <div class="card">
 <h2>Cargar Excel</h2>
-<input type="file" id="excelFile" accept=".xlsx,.xls">
-<button class="btn-success" onclick="cargarExcel()">Cargar</button>
+<div class="fila-acciones">
+    <input type="file" id="excelFile" accept=".xlsx,.xls">
+    <button class="btn-success" onclick="cargarExcel()">Cargar</button>
+    <button onclick="volverEscaner()">Volver al Escaner</button>
+</div>
 <hr>
 <div class="fila-selectores">
     <div>
@@ -26,8 +29,6 @@
         <select id="bloque"></select>
     </div>
 </div>
-<button class="btn-success" onclick="iniciarScanner()">Escanear</button>
-<button class="btn-secondary" onclick="location.href='../index.html'">Volver al Escaner</button>
 <div id="reader"></div>
 <input id="manual" placeholder="Ingresar TB204626">
 <button class="btn-success" onclick="buscarManual()">Buscar</button>
