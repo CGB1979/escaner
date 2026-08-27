@@ -1,3 +1,11 @@
 #reader{max-width:420px;margin:15px auto}.vehiculo{padding:12px;margin:8px;border:1px solid #ccc;border-radius:8px}
 #reader{display:none;}
 #reader.activo{display:block;}
+.fila-selectores {
+    display: flex;
+    gap: 15px;
+}
+
+.fila-selectores > div {
+    flex: 1;
+}
