@@ -2,5 +2,8 @@ const CONFIG_EXCEL={
  chasis:"A",
  playa:"B",
  bloque:"C",
- observaciones:"D"
+ carril:"D",
+ posicion:"E",
+ ubicacion:"F",
+ observaciones:"G"
 };
