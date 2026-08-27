@@ -46,6 +46,7 @@ function obs(c){
 function buscarManual(){procesar(document.getElementById('manual').value.trim());}
 function iniciarScanner(){
  if(scanner)return;
+ document.getElementById("reader").classList.add("activo");
  scanner=new Html5Qrcode("reader");
  scanner.start({facingMode:"environment"},{fps:10,qrbox:250},c=>{scanner.stop();procesar(c);});
 }
