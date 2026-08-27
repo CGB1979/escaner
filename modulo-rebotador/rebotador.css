@@ -40,7 +40,16 @@
 .fila-acciones input[type="file"] {
     flex:1;
 }
+.btn-archivo {
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+}
 
+.btn-archivo input {
+    display:none;
+}
 .fila-acciones button {
     white-space:nowrap;
 }
