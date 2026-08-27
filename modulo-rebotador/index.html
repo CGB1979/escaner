@@ -13,8 +13,12 @@
 <div class="card">
 <h2>Cargar Excel</h2>
 <div class="fila-acciones">
-    <input type="file" id="excelFile" accept=".xlsx,.xls">
-    <button class="btn-success" onclick="cargarExcel()">Cargar</button>
+    <label class="btn-success btn-archivo">
+    <span id="nombreArchivo">Seleccionar archivo</span>
+    <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="mostrarArchivo(this)">
+</label>
+
+<button class="btn-success" onclick="cargarExcel()">Cargar</button>
     <button onclick="volverEscaner()">Volver al Escaner</button>
 </div>
 <hr>
