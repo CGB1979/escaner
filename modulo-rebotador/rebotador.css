@@ -3,13 +3,6 @@
     margin:15px auto;
 }
 
-.vehiculo {
-    padding:12px;
-    margin:8px;
-    border:1px solid #ccc;
-    border-radius:8px;
-}
-
 #reader {
     display:none;
 }
@@ -18,34 +11,34 @@
     display:block;
 }
 
-
-/* Playa y Bloque */
-.fila-selectores {
-    display:flex;
-    gap:15px;
-}
-
-.fila-selectores > div {
-    flex:1;
+.vehiculo {
+    padding:12px;
+    margin:8px;
+    border:1px solid #ccc;
+    border-radius:8px;
 }
 
 
-/* Archivo + botones */
+/* Botones de carga */
 .fila-acciones {
     display:flex;
     align-items:center;
     gap:10px;
     width:100%;
+    margin-bottom:15px;
 }
 
-.btn-fijo {
+.fila-acciones .btn-archivo {
+    flex:1;
+}
+
+.fila-acciones button {
     width:155px;
     height:44px;
     flex-shrink:0;
 }
 
 .btn-archivo {
-    flex:1;
     height:44px;
     display:flex;
     align-items:center;
@@ -56,6 +49,15 @@
 .btn-archivo input {
     display:none;
 }
-.fila-acciones button {
-    white-space:nowrap;
+
+
+/* Playa y Bloque */
+.fila-selectores {
+    display:flex;
+    gap:15px;
+    width:100%;
+}
+
+.fila-selectores > div {
+    flex:1;
 }
