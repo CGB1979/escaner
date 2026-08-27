@@ -1,11 +1,46 @@
-#reader{max-width:420px;margin:15px auto}.vehiculo{padding:12px;margin:8px;border:1px solid #ccc;border-radius:8px}
-#reader{display:none;}
-#reader.activo{display:block;}
+#reader {
+    max-width:420px;
+    margin:15px auto;
+}
+
+.vehiculo {
+    padding:12px;
+    margin:8px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+#reader {
+    display:none;
+}
+
+#reader.activo {
+    display:block;
+}
+
+
+/* Playa y Bloque */
 .fila-selectores {
-    display: flex;
-    gap: 15px;
+    display:flex;
+    gap:15px;
 }
 
 .fila-selectores > div {
-    flex: 1;
+    flex:1;
+}
+
+
+/* Archivo + botones */
+.fila-acciones {
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.fila-acciones input[type="file"] {
+    flex:1;
+}
+
+.fila-acciones button {
+    white-space:nowrap;
 }
