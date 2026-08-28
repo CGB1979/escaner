@@ -28,8 +28,14 @@
     margin-bottom:15px;
 }
 
-.fila-acciones .btn-archivo {
+.btn-archivo {
     flex:1;
+    height:44px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-sizing:border-box;
 }
 
 .fila-acciones button {
@@ -38,12 +44,19 @@
     flex-shrink:0;
 }
 
-.btn-archivo {
-    height:44px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
+
+@media (max-width:600px){
+
+    .fila-acciones {
+        flex-direction:column;
+    }
+
+    .btn-archivo,
+    .fila-acciones button {
+        width:100%;
+        flex:none;
+    }
+
 }
 
 .btn-archivo input {
