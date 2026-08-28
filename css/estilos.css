@@ -491,20 +491,8 @@ button:disabled {
 
 .top-buttons {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
-    width: 100%;
-}
-
-.action-bottom {
-    min-width: 0;
-    width: 100%;
-    font-size: clamp(10px, 2.2vw, 15px);
-    padding-left: 4px;
-    padding-right: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 #scannerModal {
@@ -851,20 +839,8 @@ button:disabled {
 
     .top-buttons {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
-    width: 100%;
-}
-
-.action-bottom {
-    min-width: 0;
-    width: 100%;
-    font-size: clamp(10px, 2.2vw, 15px);
-    padding-left: 4px;
-    padding-right: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 /* =========================================
@@ -963,3 +939,61 @@ button:disabled {
 
 /* Modal reutilizable para reemplazar cuadros nativos del navegador */
 .modal-buttons.app-dialog-one-button { grid-template-columns: 1fr; }
+
+
+/* ===== Ajuste interfaz pantalla completa ===== */
+.app-wrapper {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+}
+
+.container {
+    width: 100%;
+    max-width: none;
+    padding: clamp(12px, 2vw, 28px);
+}
+
+.card {
+    width: 100%;
+    padding: clamp(14px, 2.5vw, 30px);
+    border-radius: clamp(12px, 1.5vw, 18px);
+}
+
+.app-header h1 {
+    font-size: clamp(21px, 2.5vw, 34px);
+}
+
+.app-header p {
+    font-size: clamp(12px, 1.4vw, 18px);
+}
+
+button {
+    font-size: clamp(12px, 1.4vw, 18px);
+}
+
+.big-button {
+    font-size: clamp(15px, 2vw, 24px);
+}
+
+.card h2 {
+    font-size: clamp(20px, 2vw, 30px);
+}
+
+.card h3 {
+    font-size: clamp(18px, 1.8vw, 26px);
+}
+
+select, input {
+    font-size: clamp(15px, 1.5vw, 20px);
+}
+
+.fixed-bottom-actions {
+    max-width: none;
+}
+
+@media (max-width:600px){
+    .container {
+        padding: 10px;
+    }
+}
