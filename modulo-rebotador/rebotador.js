@@ -16,8 +16,11 @@ function cargarExcel(){
    chasis:String(x[col(CONFIG_EXCEL.chasis)]||''),
    playa:String(x[col(CONFIG_EXCEL.playa)]||''),
    bloque:String(x[col(CONFIG_EXCEL.bloque)]||''),
+   carril:String(x[col(CONFIG_EXCEL.carril)]||''),
+   posicion:String(x[col(CONFIG_EXCEL.posicion)]||''),
+   ubicacion:String(x[col(CONFIG_EXCEL.ubicacion)]||''),
    observaciones:String(x[col(CONFIG_EXCEL.observaciones)]||'')
-  })).filter(x=>x.chasis);
+})).filter(x=>x.chasis);
   cargarSelectores();
   alert("Excel cargado");
   document.getElementById("nombreArchivo").textContent = "Cargado";
@@ -37,8 +40,32 @@ function procesar(codigo){
 }
 function mostrar(t){lista.innerHTML='<div class="vehiculo">'+t+'</div>';}
 function mostrarVehiculo(v){
- lista.innerHTML=`<div class="vehiculo"><b>Vehículo correcto</b><br>${v.chasis}<br>Playa ${v.playa} Bloque ${v.bloque}<br>Obs: ${v.observaciones||'Sin observaciones'}<br>
-<button onclick="obs('${v.chasis}')">Observación</button></div>`;
+
+ let detalle="";
+
+ // Playa especial (5 vehículos por carril)
+ if(v.playa==="I"){
+     detalle=`Ubicación: ${v.ubicacion}`;
+ }
+
+ // Playa normal (2 vehículos por carril)
+ else{
+     detalle=`Ubicación: ${v.ubicacion}<br>
+              Posición: ${v.posicion}`;
+ }
+
+ lista.innerHTML=`
+ <div class="vehiculo">
+     <b>Vehículo correcto</b><br><br>
+
+     Chasis: ${v.chasis}<br>
+     ${detalle}<br><br>
+
+     Observaciones:<br>
+     ${v.observaciones || 'Sin observaciones'}<br><br>
+
+     <button onclick="obs('${v.chasis}')">Observación</button>
+ </div>`;
 }
 function obs(c){
  let v=datos.find(x=>x.chasis===c); let n=prompt("Observación",v.observaciones);
