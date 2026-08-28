@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#5f9a3d">
 <link rel="stylesheet" href="css/estilos.css">
-</head>
+</head><button class="btn-warning" onclick="cambiarUbicacion()">
 <body>
 <div id="app-shell">
 <div class="app-wrapper">
@@ -96,7 +96,7 @@
 <div class="card">
 <div class="current-location">
 <div class="current-location-info"><!-- EDITABLE: texto de etiqueta --> <span class="current-location-label">Ubicacion actual</span>  <!-- EDITABLE: texto que aparece como ubicacion inicial --> <span class="current-location-value" id="tituloUbicacion"> Playa A - Bloque A </span></div>
-<!-- EDITABLE: texto del boton --> <button class="btn-warning btn-change-location" onclick="abrirCambioUbicacionGeneral()"> Cambiar ubicacion </button></div>
+<!-- EDITABLE: texto del boton ACTUALMENTE OCULTO --> <button class="btn-warning btn-change-location" onclick="abrirCambioUbicacionGeneral()" style="display:none;"> Cambiar ubicacion </button>
 <div class="summary">
 <div class="summary-box"><span class="number" id="cantidadVehiculos">0</span>  <!-- EDITABLE: texto --> <span>Vehiculos</span></div>
 <div class="summary-box"><span class="number" id="proximaPosicion">1</span>  <!-- EDITABLE: texto --> <span>Proxima posicion</span></div>
