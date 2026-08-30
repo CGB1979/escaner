@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Rebotador</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#5f9a3d">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<div id="app-shell">
+  <div class="app-wrapper">
+    <header class="app-header">
+      <h1>Rebotador</h1>
+      <p>Gestión de vehículos desde archivo Excel</p>
+    </header>
+
+    <main class="container">
+      <section class="card">
+        <div class="section-title"><h2>Cargar archivo</h2></div>
+        <p class="section-subtitle">Seleccione el archivo Excel sobre el que trabajará el Rebotador.</p>
+
+        <input id="excelFile" type="file" accept=".xlsx,.xls,.xlsm,.csv" class="hidden">
+
+        <div class="excel-buttons-row">
+          <button id="btnBuscarExcel" class="btn-rebotador excel-action-button" type="button" onclick="abrirSelectorExcel()">Buscar Excel</button>
+          <button id="btnCargarExcel" class="btn-rebotador excel-action-button" type="button" onclick="cargarExcel()" disabled>Cargar</button>
+        </div>
+
+        <div id="excelStatus" class="excel-status">
+          <div><strong>Archivo:</strong> <span id="excelNombreArchivo">No hay ningún archivo cargado.</span></div>
+          <div><strong>Vehículos cargados:</strong> <span id="cantidadVehiculosCargados">0</span></div>
+          <div><strong>Vehículos restantes:</strong> <span id="cantidadVehiculosEncontrados">0</span></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <button class="btn-primary big-button" type="button" onclick="abrirScanner()">REBOTAR VEHÍCULO</button>
+        <button class="btn-rebotador-back big-button" type="button" onclick="volverAlEscanerNormal()">VOLVER AL ESCÁNER NORMAL</button>
+      </section>
+
+      <section class="card">
+        <div class="section-title"><h2>Filtrar vehículos</h2></div>
+        <p class="section-subtitle">Sin seleccionar Playa y Bloque se muestran todos los vehículos cargados.</p>
+        <div class="row">
+          <div class="form-group">
+            <label for="playa">Playa</label>
+            <select id="playa"><option value="">Todas</option></select>
+          </div>
+          <div class="form-group">
+            <label for="bloque">Bloque</label>
+            <select id="bloque"><option value="">Todos</option></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="card vehicle-list-card">
+        <h2 id="listaTitulo">Vehículos cargados</h2>
+        <div class="vehicle-list-scroll">
+          <div id="listaVehiculos"></div>
+        </div>
+      </section>
+    </main>
+
+    <div class="fixed-bottom-actions">
+      <div class="top-buttons">
+        <button class="btn-success" type="button" onclick="exportarCSV()">Exportar Excel</button>
+        <button class="btn-danger" type="button" onclick="confirmarBorrarTodo()">Borrar todo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="scannerModal" class="hidden">
+  <div class="scanner-header">
+    <h2>Rebotar vehículo</h2>
+    <button class="btn-danger" type="button" onclick="cerrarScanner()">X</button>
+  </div>
+
+  <div class="scanner-camera">
+    <div id="reader"></div>
+    <div class="scan-frame"></div>
+    <div class="scan-help">Coloque el código dentro del recuadro</div>
+  </div>
+
+  <div class="scanner-bottom">
+    <div id="scanResult" class="scan-result hidden">
+      <h3 id="scanTitulo"></h3>
+      <div id="scanInfo"></div>
+      <div id="scanButtons" class="scan-buttons"></div>
+    </div>
+
+    <button id="btnIngresarManual" class="btn-success" type="button" onclick="abrirIngresoManual()">Ingresar manualmente</button>
+    <button id="btnSalirScanner" class="btn-danger" type="button" onclick="cerrarScanner()">Salir de escaneo</button>
+    <div class="scanner-status" id="scannerStatus">Apunte la cámara al código de barras</div>
+  </div>
+</div>
+
+<div id="manualCodeModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Ingresar código manualmente</h2>
+    <p class="modal-description">Ingrese el chasis completo o las últimas 4 a 6 letras/números.</p>
+    <div class="form-group">
+      <label for="manualCodeInput">Código o parte final del chasis</label>
+      <input id="manualCodeInput" autocomplete="off">
+    </div>
+    <div class="modal-buttons">
+      <button class="btn-secondary" type="button" onclick="cerrarIngresoManual()">Cancelar</button>
+      <button class="btn-success" type="button" onclick="confirmarIngresoManual()">Continuar</button>
+    </div>
+  </div>
+</div>
+
+<div id="coincidenciasModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Coincidencias encontradas</h2>
+    <p class="modal-description">Seleccione el vehículo correcto.</p>
+    <div id="listaCoincidencias" class="coincidencias-list"></div>
+    <div class="modal-buttons">
+      <button class="btn-secondary" type="button" onclick="cerrarCoincidencias()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div id="locationModal" class="modal hidden">
+  <div class="modal-content">
+    <h2>Cambiar ubicación</h2>
+
+    <div class="cambio-vehiculo-info">
+      <div class="cambio-chasis">Chasis: <span id="cambioChasis">—</span></div>
+      <div id="cambioUbicacionActual" class="cambio-ubicacion-actual">—</div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label for="cambioPlaya">Playa</label>
+        <select id="cambioPlaya"></select>
+      </div>
+      <div class="form-group">
+        <label for="cambioBloque">Bloque</label>
+        <select id="cambioBloque"></select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label for="cambioCarril">Carril</label>
+        <input id="cambioCarril" list="cambioCarrilOpciones" type="number" min="1" step="1" inputmode="numeric" autocomplete="off">
+        <datalist id="cambioCarrilOpciones"></datalist>
+      </div>
+      <div class="form-group">
+        <label id="labelCambioPosicion" for="cambioPosicion">Ubicación</label>
+        <select id="cambioPosicion"></select>
+      </div>
+    </div>
+
+    <div id="locationPreview" class="location-preview"></div>
+
+    <div class="modal-buttons">
+      <button class="btn-secondary" type="button" onclick="cerrarCambioUbicacion()">Cancelar</button>
+      <button id="btnGuardarCambioUbicacion" class="btn-primary" type="button" onclick="confirmarCambioUbicacion()">Guardar cambio</button>
+    </div>
+  </div>
+</div>
+
+<div id="confirmModal" class="modal hidden">
+  <div class="modal-content">
+    <h2 id="confirmTitulo">Confirmar</h2>
+    <div id="confirmMensaje"></div>
+    <div class="modal-buttons">
+      <button class="btn-secondary" type="button" onclick="cerrarConfirmacion()">Cancelar</button>
+      <button id="confirmAceptar" class="btn-danger" type="button">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div id="appDialogModal" class="modal hidden">
+  <div class="modal-content">
+    <h2 id="appDialogTitle">Atención</h2>
+    <p id="appDialogMessage" class="modal-description"></p>
+    <div id="appDialogInputGroup" class="form-group hidden">
+      <label for="appDialogInput">Valor</label>
+      <input type="text" id="appDialogInput" autocomplete="off">
+    </div>
+    <div class="modal-buttons">
+      <button type="button" id="appDialogCancel" class="btn-secondary hidden">Cancelar</button>
+      <button type="button" id="appDialogAccept" class="btn-success">Aceptar</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="js/configuracionExcel.js"></script>
+<script src="js/configuracion.js"></script>
+<script src="js/persistencia.js"></script>
+<script src="js/playasEspeciales.js"></script>
+<script src="js/vehiculos.js"></script>
+<script src="js/sonidos.js"></script>
+<script src="js/scanner.js"></script>
+<script src="js/ubicaciones.js"></script>
+<script src="js/exportacion.js"></script>
+<script src="js/version.js"></script>
+<script src="js/app.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register(`./service-worker.js?v=${APP_VERSION}`, { scope: "./" });
+  });
+}
+</script>
+</body>
+</html>

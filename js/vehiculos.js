@@ -20,9 +20,24 @@ function actualizarPantalla() {
         registros.length;
 
     const siguiente = obtenerProximaPosicion(playa, bloque);
-    proximaPosicion.innerText = esPlayaEspecial(playa)
-        ? siguiente
-        : formatearUbicacionNormal(siguiente);
+
+    if (esPlayaEspecial(playa)) {
+
+        const p = parsearPosicionEspecial(siguiente);
+
+        proximaPosicion.innerHTML = p
+            ? `Carril ${p.calle}<br><span class="next-position-line">Posicion ${p.fila}</span>`
+            : String(siguiente);
+
+    } else {
+
+        const u = obtenerUbicacionNormal(siguiente);
+
+        proximaPosicion.innerHTML = u
+            ? `Carril ${u.carril}<br><span class="next-position-line">Posicion ${u.posicion}</span>`
+            : String(siguiente);
+
+    }
 
     mostrarVehiculos();
     actualizarAyudaNumeracion();
@@ -121,7 +136,6 @@ function mostrarVehiculos() {
 
             if (p) {
 
-                // EDITABLE: textos que describen la ubicacion de vehiculos
                 etiquetaUbicacion = `
                     <div class="vehicle-info">
                         Playa ${escapeHTML(v.playa)}
@@ -136,7 +150,6 @@ function mostrarVehiculos() {
 
             } else {
 
-                // EDITABLE: textos que describen la ubicacion de vehiculos
                 etiquetaUbicacion = `
                     <div class="vehicle-info">
                         Playa ${escapeHTML(v.playa)}
@@ -149,24 +162,41 @@ function mostrarVehiculos() {
 
         } else {
 
-            // EDITABLE: textos que describen la ubicacion de vehiculos
-            etiquetaUbicacion = `
-                <div class="vehicle-info">
-                    Playa ${escapeHTML(v.playa)}
-                    -
-                    Bloque ${escapeHTML(v.bloque)}
-                </div>
-            `;
+            const ubicacion =
+                obtenerUbicacionNormal(v.posicion);
+
+            if (ubicacion) {
+
+                etiquetaUbicacion = `
+                    <div class="vehicle-info">
+                        Playa ${escapeHTML(v.playa)}
+                        -
+                        Bloque ${escapeHTML(v.bloque)}
+                        -
+                        Carril ${escapeHTML(ubicacion.carril)}
+                        -
+                        ${escapeHTML(ubicacion.posicion)}
+                    </div>
+                `;
+
+            } else {
+
+                etiquetaUbicacion = `
+                    <div class="vehicle-info">
+                        Playa ${escapeHTML(v.playa)}
+                        -
+                        Bloque ${escapeHTML(v.bloque)}
+                    </div>
+                `;
+
+            }
 
         }
 
         div.innerHTML = `
 
             <div class="vehicle-position">
-
-                <!-- EDITABLE: texto antes de la posicion -->
-                Ubicacion ${escapeHTML(v.posicion)}
-
+                Chasis
             </div>
 
             <div class="vehicle-chassis">
@@ -199,5 +229,3 @@ function mostrarVehiculos() {
     });
 
 }
-
-async
