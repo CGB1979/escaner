@@ -216,13 +216,23 @@ function cargarExcel() {
   reader.readAsArrayBuffer(f);
 }
 
+function valoresUsadosEnExcel(campo) {
+  return [...new Set(
+    vehiculos
+      .map(v => normalizar(v[campo]))
+      .filter(Boolean)
+  )].sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
+}
+
 function actualizarSelectores() {
-  const playaAnterior = playaSelect.value;
-  const bloqueAnterior = bloqueSelect.value;
+  const playaAnterior = normalizar(playaSelect.value);
+  const bloqueAnterior = normalizar(bloqueSelect.value);
 
-  const playas = PLAYAS_DISPONIBLES.slice();
-
-  const bloques = BLOQUES_DISPONIBLES.slice();
+  // Solo mostramos playas que realmente existen en el Excel cargado.
+  // La opción vacía es el estado estándar: ninguna playa seleccionada.
+  const playas = datosExcel.workbook
+    ? valoresUsadosEnExcel("playa")
+    : [];
 
   playaSelect.innerHTML =
     '<option value="">Todas</option>' +
@@ -230,13 +240,27 @@ function actualizarSelectores() {
       `<option value="${escapeHTML(x)}">${escapeHTML(x)}</option>`
     ).join("");
 
+  const playaActual = playas.includes(playaAnterior) ? playaAnterior : "";
+  playaSelect.value = playaActual;
+
+  // Si hay una playa seleccionada, el selector de bloques se limita a
+  // los bloques que realmente aparecen en esa playa. Si no hay playa,
+  // muestra todos los bloques utilizados en el Excel.
+  const bloques = datosExcel.workbook
+    ? [...new Set(
+        vehiculos
+          .filter(v => !playaActual || normalizar(v.playa) === playaActual)
+          .map(v => normalizar(v.bloque))
+          .filter(Boolean)
+      )].sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }))
+    : [];
+
   bloqueSelect.innerHTML =
     '<option value="">Todos</option>' +
     bloques.map(x =>
       `<option value="${escapeHTML(x)}">${escapeHTML(x)}</option>`
     ).join("");
 
-  playaSelect.value = playas.includes(playaAnterior) ? playaAnterior : "";
   bloqueSelect.value = bloques.includes(bloqueAnterior) ? bloqueAnterior : "";
 }
 
