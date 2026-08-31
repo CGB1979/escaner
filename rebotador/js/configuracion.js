@@ -142,7 +142,7 @@ function cargarExcel() {
   const f = excelFileInput.files[0];
 
   if (!f) {
-    mostrarAlerta("Seleccione un archivo Excel.");
+    alert("Seleccione un archivo Excel.");
     return;
   }
 
@@ -165,7 +165,7 @@ function cargarExcel() {
       const cols = detectarColumnas(headers);
 
       if (cols.chasis < 0 || cols.chasis === undefined) {
-        mostrarAlerta("No se encontró la columna Chasis. Revise js/configuracionExcel.js");
+        alert("No se encontró la columna Chasis. Revise js/configuracionExcel.js");
         return;
       }
 
@@ -209,30 +209,20 @@ function cargarExcel() {
 
     } catch (err) {
       console.error(err);
-      mostrarAlerta("No se pudo leer el archivo Excel.");
+      alert("No se pudo leer el archivo Excel.");
     }
   };
 
   reader.readAsArrayBuffer(f);
 }
 
-function valoresUsadosEnExcel(campo) {
-  return [...new Set(
-    vehiculos
-      .map(v => normalizar(v[campo]))
-      .filter(Boolean)
-  )].sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }));
-}
-
 function actualizarSelectores() {
-  const playaAnterior = normalizar(playaSelect.value);
-  const bloqueAnterior = normalizar(bloqueSelect.value);
+  const playaAnterior = playaSelect.value;
+  const bloqueAnterior = bloqueSelect.value;
 
-  // Solo mostramos playas que realmente existen en el Excel cargado.
-  // La opción vacía es el estado estándar: ninguna playa seleccionada.
-  const playas = datosExcel.workbook
-    ? valoresUsadosEnExcel("playa")
-    : [];
+  const playas = PLAYAS_DISPONIBLES.slice();
+
+  const bloques = BLOQUES_DISPONIBLES.slice();
 
   playaSelect.innerHTML =
     '<option value="">Todas</option>' +
@@ -240,27 +230,13 @@ function actualizarSelectores() {
       `<option value="${escapeHTML(x)}">${escapeHTML(x)}</option>`
     ).join("");
 
-  const playaActual = playas.includes(playaAnterior) ? playaAnterior : "";
-  playaSelect.value = playaActual;
-
-  // Si hay una playa seleccionada, el selector de bloques se limita a
-  // los bloques que realmente aparecen en esa playa. Si no hay playa,
-  // muestra todos los bloques utilizados en el Excel.
-  const bloques = datosExcel.workbook
-    ? [...new Set(
-        vehiculos
-          .filter(v => !playaActual || normalizar(v.playa) === playaActual)
-          .map(v => normalizar(v.bloque))
-          .filter(Boolean)
-      )].sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }))
-    : [];
-
   bloqueSelect.innerHTML =
     '<option value="">Todos</option>' +
     bloques.map(x =>
       `<option value="${escapeHTML(x)}">${escapeHTML(x)}</option>`
     ).join("");
 
+  playaSelect.value = playas.includes(playaAnterior) ? playaAnterior : "";
   bloqueSelect.value = bloques.includes(bloqueAnterior) ? bloqueAnterior : "";
 }
 

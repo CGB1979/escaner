@@ -1,10 +1,8 @@
-async function confirmarBorrarTodo() {
+function confirmarBorrarTodo() {
   if (!datosExcel.workbook) return;
 
-  const borrarTodo = await mostrarConfirmacion(
-    "¿Eliminar el Excel guardado y todos los datos de la sesión?",
-    "Eliminar datos",
-    "Eliminar todo"
+  const borrarTodo = confirm(
+    "¿Eliminar el Excel guardado y todos los datos de la sesión?\n\nAceptar = eliminar Excel y todos los datos.\nCancelar = ver la siguiente opción."
   );
 
   if (borrarTodo) {
@@ -15,7 +13,6 @@ async function confirmarBorrarTodo() {
     };
     excelFileInput.value = "";
     btnBuscarExcel.textContent = "Buscar Excel";
-    btnBuscarExcel.classList.remove("excel-cargado");
     btnCargarExcel.disabled = true;
     if (typeof eliminarSesionGuardada === "function") eliminarSesionGuardada();
     actualizarPantalla();
@@ -24,14 +21,7 @@ async function confirmarBorrarTodo() {
   }
 
   if (!vehiculos.length) return;
-
-  const reiniciar = await mostrarConfirmacion(
-    "¿Reiniciar solo las asignaciones y movimientos? El Excel seguirá cargado y la sesión se conservará.",
-    "Reiniciar asignaciones",
-    "Reiniciar"
-  );
-
-  if (reiniciar) {
+  if (confirm("¿Reiniciar solo las asignaciones y movimientos? El Excel seguirá cargado y la sesión se conservará.")) {
     vehiculos.forEach(v => {
       v.playa = "";
       v.bloque = "";
@@ -92,7 +82,7 @@ function limpiarFila(fila, maxCol) {
 
 function exportarCSV() {
   if (!datosExcel.workbook || !datosExcel.worksheet) {
-    mostrarAlerta("No hay un archivo Excel cargado para exportar.");
+    alert("No hay un archivo Excel cargado para exportar.");
     return;
   }
 
@@ -162,3 +152,6 @@ function exportarCSV() {
   );
 }
 
+function cerrarConfirmacion() {
+  document.getElementById("confirmModal").classList.add("hidden");
+}

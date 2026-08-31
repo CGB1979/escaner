@@ -1,4 +1,4 @@
-const VERSION = new URL(self.location.href).searchParams.get("v") || "1.0.1.l";
+const VERSION = new URL(self.location.href).searchParams.get("v") || "1.0.1.h";
 const CACHE_NAME = `rebotador-${VERSION}`;
 
 const APP_ASSETS = [

@@ -1,6 +1,6 @@
 async function abrirScanner() {
   if (!datosExcel.workbook) {
-    await mostrarAlerta("Primero cargue un archivo Excel.");
+    alert("Primero cargue un archivo Excel.");
     return;
   }
 
@@ -156,10 +156,10 @@ function cancelarResultadoScan() {
   continuarEscaneo();
 }
 
-async function borrarDesdeScan() {
+function borrarDesdeScan() {
   if (!vehiculoActual) return;
 
-  const borrado = await eliminarVehiculo(vehiculoActual.id);
+  const borrado = eliminarVehiculo(vehiculoActual.id);
 
   if (borrado) {
     continuarEscaneo("Vehículo eliminado. Continúe escaneando.");
@@ -212,14 +212,14 @@ function cerrarIngresoManual() {
   if (scannerActivo) bloqueandoLectura = false;
 }
 
-async function confirmarIngresoManual() {
+function confirmarIngresoManual() {
   const c = normalizar(
     document.getElementById("manualCodeInput").value
   );
 
   if (c.length < 4) {
     sonidoError();
-    await mostrarAlerta("Ingrese al menos 4 caracteres.");
+    alert("Ingrese al menos 4 caracteres.");
     return;
   }
 
