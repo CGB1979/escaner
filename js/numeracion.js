@@ -110,13 +110,17 @@ function actualizarControlesPlaya() {
     const inversaControl = document.getElementById("asignarInversa");
 
     if (inversaControl) {
+
         // En playas normales, Continua no admite asignacion inversa.
         // Las playas especiales conservan su logica propia de inversion.
         const habilitada = esJ || modoActual !== "continua";
+
         inversaControl.disabled = !habilitada;
+
         if (!habilitada && inversaControl.checked) {
             inversaControl.checked = false;
         }
+
     }
 
     if (!esJ) {
@@ -222,6 +226,9 @@ function guardarConfiguracionNumeracion(reiniciarProgreso) {
     configuracionNumeracion = {
         modo: modo,
         inicio: inicio,
+        inicioBase: Number.isFinite(Number(numeroInicialBase))
+            ? Number(numeroInicialBase)
+            : inicio,
         filaInicio: fila,
         inversa: inversa
     };
@@ -232,12 +239,17 @@ function guardarConfiguracionNumeracion(reiniciarProgreso) {
     );
 
     if (reiniciarProgreso) {
-        reiniciarProgresoNumeracion(playaSelect.value, bloqueSelect.value);
+        reiniciarProgresoNumeracion(
+            playaSelect.value,
+            bloqueSelect.value
+        );
     }
 
     actualizarAyudaNumeracion();
 
 }
+
+let numeroInicialBase = null;
 
 function cargarConfiguracionNumeracion() {
 
@@ -245,6 +257,11 @@ function cargarConfiguracionNumeracion() {
 
     let inicio = parseInt(
         configuracionNumeracion.inicio,
+        10
+    );
+
+    let inicioBaseGuardado = parseInt(
+        configuracionNumeracion.inicioBase,
         10
     );
 
@@ -268,6 +285,12 @@ function cargarConfiguracionNumeracion() {
         inicio = 1;
     }
 
+    if (!Number.isFinite(inicioBaseGuardado) || inicioBaseGuardado < 1) {
+        inicioBaseGuardado = inicio;
+    }
+
+    numeroInicialBase = inicioBaseGuardado;
+
     if (!Number.isFinite(fila) || fila < 1 || fila > 5) {
         fila = 1;
     }
@@ -280,17 +303,25 @@ function cargarConfiguracionNumeracion() {
         inicio += inversa ? -1 : 1;
     }
 
-    if (inversa && (modo === "pares" || modo === "impares") && inicio <= 1) {
+    if (
+        inversa &&
+        (modo === "pares" || modo === "impares") &&
+        inicio <= 1
+    ) {
         inicio = modo === "pares" ? 2 : 3;
     }
 
-    if (!esPlayaEspecial(playaSelect.value) && modo === "continua") {
+    if (
+        !esPlayaEspecial(playaSelect.value) &&
+        modo === "continua"
+    ) {
         inversa = false;
     }
 
     configuracionNumeracion = {
         modo: modo,
         inicio: inicio,
+        inicioBase: numeroInicialBase,
         filaInicio: fila,
         inversa: inversa
     };
@@ -319,7 +350,10 @@ function cargarConfiguracionNumeracion() {
 
     numeroInicial.value = inicio;
     filaInicial.value = fila;
-    const inversaControl = document.getElementById("asignarInversa");
+
+    const inversaControl =
+        document.getElementById("asignarInversa");
+
     if (inversaControl) {
         inversaControl.checked = inversa;
     }
@@ -333,31 +367,69 @@ function cargarConfiguracionNumeracion() {
 function ajustarNumeroInicialPorModo() {
 
     const modo = obtenerModoNumeracion();
-    let numero = parseInt(numeroInicial.value, 10);
     const inversa = obtenerAsignacionInversa();
 
-    if (!Number.isFinite(numero) || numero < 1) {
-        numero = 1;
+    // El numero base es independiente del modo seleccionado.
+    // Al cambiar entre Pares e Impares no se debe usar el numero ya
+    // normalizado del modo anterior.
+    if (
+        !Number.isFinite(Number(numeroInicialBase)) ||
+        numeroInicialBase < 1
+    ) {
+
+        numeroInicialBase =
+            parseInt(
+                numeroInicial.value,
+                10
+            );
+
+        if (
+            !Number.isFinite(numeroInicialBase) ||
+            numeroInicialBase < 1
+        ) {
+
+            numeroInicialBase = 1;
+
+        }
+
     }
 
-    if (inversa && (modo === "pares" || modo === "impares") && numero <= 1) {
-        numero = modo === "pares" ? 2 : 3;
-    }
+    let numero =
+        Number(numeroInicialBase);
 
-    numero = normalizarNumeroParaDireccion(
-        numero,
-        modo,
-        inversa
-    );
+    if (
+        modo === "pares" ||
+        modo === "impares"
+    ) {
 
-    if (numero < 1) {
-        numero = inversa ? (modo === "pares" ? 3 : 2) : 1;
+        numero =
+            normalizarNumeroParaDireccion(
+                numero,
+                modo,
+                inversa
+            );
+
+        if (numero < 1) {
+
+            numero =
+                inversa
+                    ? (
+                        modo === "pares"
+                            ? 2
+                            : 3
+                    )
+                    : 1;
+
+        }
+
     }
 
     numeroInicial.value = numero;
 
     actualizarControlesPlaya();
+
     guardarConfiguracionNumeracion(true);
+
     actualizarPantalla();
 
 }
@@ -368,48 +440,72 @@ async function editarInicioPlayaEspecial() {
         return;
     }
 
-    const actual = obtenerInicioNumeracionEspecial();
+    const actual =
+        obtenerInicioNumeracionEspecial();
 
-    // EDITABLE: texto que aparece en la ventana para cambiar el inicio
-    const respuesta = await mostrarPrompt(
-        "Ingrese el numero de Carril desde el que desea comenzar la asignacion:",
-        String(actual)
-    );
+    const respuesta =
+        await mostrarPrompt(
+            "Ingrese el numero de Carril desde el que desea comenzar la asignacion:",
+            String(actual)
+        );
 
     if (respuesta === null) {
         return;
     }
 
-    const numero = parseInt(
-        String(respuesta).trim(),
-        10
-    );
+    const numero =
+        parseInt(
+            String(respuesta).trim(),
+            10
+        );
 
-    if (!Number.isFinite(numero) || numero < 1) {
+    if (
+        !Number.isFinite(numero) ||
+        numero < 1
+    ) {
 
-        // EDITABLE: mensaje de error
-        mostrarAlerta("Ingrese un numero valido mayor o igual a 1.");
+        mostrarAlerta(
+            "Ingrese un numero valido mayor o igual a 1."
+        );
 
         return;
 
     }
 
-    if (obtenerAsignacionInversa() && numero <= 1) {
-        mostrarAlerta("Con Asignar a la inversa, el numero inicial debe ser mayor que 1.");
+    if (
+        obtenerAsignacionInversa() &&
+        numero <= 1
+    ) {
+
+        mostrarAlerta(
+            "Con Asignar a la inversa, el numero inicial debe ser mayor que 1."
+        );
+
         return;
+
     }
 
-    configuracionNumeracion.inicio = numero;
-    configuracionNumeracion.inversa = obtenerAsignacionInversa();
+    configuracionNumeracion.inicio =
+        numero;
 
+    configuracionNumeracion.inversa =
+        obtenerAsignacionInversa();
+
+    numeroInicialBase = numero;
     numeroInicial.value = numero;
 
     localStorage.setItem(
         "configNumeracionPlaya",
-        JSON.stringify(configuracionNumeracion)
+        JSON.stringify(
+            configuracionNumeracion
+        )
     );
 
-    reiniciarProgresoNumeracion(playaSelect.value, bloqueSelect.value);
+    reiniciarProgresoNumeracion(
+        playaSelect.value,
+        bloqueSelect.value
+    );
+
     actualizarAyudaNumeracion();
     actualizarPantalla();
 
@@ -433,7 +529,9 @@ numberingHelp.addEventListener(
 );
 
 document
-    .querySelectorAll('input[name="modoNumeracion"]')
+    .querySelectorAll(
+        'input[name="modoNumeracion"]'
+    )
     .forEach(function(radio) {
 
         radio.addEventListener(
@@ -443,18 +541,49 @@ document
 
     });
 
-const asignarInversa = document.getElementById("asignarInversa");
+const asignarInversa =
+    document.getElementById(
+        "asignarInversa"
+    );
 
 if (asignarInversa) {
-    asignarInversa.addEventListener("change", function() {
-        ajustarNumeroInicialPorModo();
-    });
+
+    asignarInversa.addEventListener(
+        "change",
+        function() {
+
+            ajustarNumeroInicialPorModo();
+
+        }
+    );
+
 }
 
 numeroInicial.addEventListener(
     "change",
     function() {
+
+        let numero =
+            parseInt(
+                numeroInicial.value,
+                10
+            );
+
+        if (
+            !Number.isFinite(numero) ||
+            numero < 1
+        ) {
+
+            numero = 1;
+
+        }
+
+        // Este es el valor que realmente escribio el usuario.
+        // Cambiar de modo posteriormente no debe modificar esta base.
+        numeroInicialBase = numero;
+
         ajustarNumeroInicialPorModo();
+
     }
 );
 
@@ -471,43 +600,88 @@ filaInicial.addEventListener(
 
 function actualizarAyudaNumeracion() {
 
-    const modo = obtenerModoNumeracion();
-    const inversa = obtenerAsignacionInversa();
+    const modo =
+        obtenerModoNumeracion();
 
-    if (esPlayaEspecial(playaSelect.value)) {
-        const inicio = obtenerInicioNumeracionEspecial();
+    const inversa =
+        obtenerAsignacionInversa();
+
+    if (
+        esPlayaEspecial(
+            playaSelect.value
+        )
+    ) {
+
+        const inicio =
+            obtenerInicioNumeracionEspecial();
 
         if (modo === "continua") {
-            numberingHelp.innerText = inversa
-                ? `Se asignara ${inicio}-5, ${inicio}-4, ${inicio}-3, ${inicio}-2, ${inicio}-1 y luego ${inicio - 1}-5, ${inicio - 1}-4...`
-                : `Se asignara ${inicio}-1, ${inicio}-2, ${inicio}-3, ${inicio}-4, ${inicio}-5 y luego ${inicio + 1}-1, ${inicio + 1}-2...`;
-            numberingHelp.classList.add("editable-j");
+
+            numberingHelp.innerText =
+                inversa
+                    ? `Se asignara ${inicio}-5, ${inicio}-4, ${inicio}-3, ${inicio}-2, ${inicio}-1 y luego ${inicio - 1}-5, ${inicio - 1}-4...`
+                    : `Se asignara ${inicio}-1, ${inicio}-2, ${inicio}-3, ${inicio}-4, ${inicio}-5 y luego ${inicio + 1}-1, ${inicio + 1}-2...`;
+
+            numberingHelp.classList.add(
+                "editable-j"
+            );
+
             return;
+
         }
 
         if (modo === "porFila") {
-            const fila = obtenerFilaInicial();
-            numberingHelp.innerText = inversa
-                ? `Se escaneara la fila ${fila}: ${inicio}-${fila}, ${inicio - 1}-${fila}, ${inicio - 2}-${fila}, ${inicio - 3}-${fila}...`
-                : `Se escaneara la fila ${fila}: ${inicio}-${fila}, ${inicio + 1}-${fila}, ${inicio + 2}-${fila}, ${inicio + 3}-${fila}...`;
-            numberingHelp.classList.add("editable-j");
+
+            const fila =
+                obtenerFilaInicial();
+
+            numberingHelp.innerText =
+                inversa
+                    ? `Se escaneara la fila ${fila}: ${inicio}-${fila}, ${inicio - 1}-${fila}, ${inicio - 2}-${fila}, ${inicio - 3}-${fila}...`
+                    : `Se escaneara la fila ${fila}: ${inicio}-${fila}, ${inicio + 1}-${fila}, ${inicio + 2}-${fila}, ${inicio + 3}-${fila}...`;
+
+            numberingHelp.classList.add(
+                "editable-j"
+            );
+
             return;
+
         }
+
     }
 
-    numberingHelp.classList.remove("editable-j");
-    const inicio = obtenerInicioNumeracion();
+    numberingHelp.classList.remove(
+        "editable-j"
+    );
+
+    const inicio =
+        obtenerInicioNumeracion();
 
     if (modo === "continua") {
-        numberingHelp.innerText = inversa
-            ? `Se asignara ${inicio}, ${inicio - 1}, ${inicio - 2}, ${inicio - 3}...`
-            : `Se asignara ${inicio}, ${inicio + 1}, ${inicio + 2}, ${inicio + 3}...`;
+
+        numberingHelp.innerText =
+            inversa
+                ? `Se asignara ${inicio}, ${inicio - 1}, ${inicio - 2}, ${inicio - 3}...`
+                : `Se asignara ${inicio}, ${inicio + 1}, ${inicio + 2}, ${inicio + 3}...`;
+
         return;
+
     }
 
-    const primero = normalizarNumeroParaDireccion(inicio, modo, inversa);
-    const paso = inversa ? -2 : 2;
-    numberingHelp.innerText = `Se asignara ${primero}, ${primero + paso}, ${primero + paso * 2}, ${primero + paso * 3}...`;
+    const primero =
+        normalizarNumeroParaDireccion(
+            inicio,
+            modo,
+            inversa
+        );
+
+    const paso =
+        inversa
+            ? -2
+            : 2;
+
+    numberingHelp.innerText =
+        `Se asignara ${primero}, ${primero + paso}, ${primero + paso * 2}, ${primero + paso * 3}...`;
 
 }
 
@@ -521,90 +695,212 @@ function obtenerUbicacionSeleccionada() {
 }
 
 function obtenerAsignacionInversa() {
-    const control = document.getElementById("asignarInversa");
+
+    const control =
+        document.getElementById(
+            "asignarInversa"
+        );
+
     if (!control) {
         return false;
     }
 
     // En playas normales, Continua nunca puede trabajar en modo inverso.
-    if (!esPlayaEspecial(playaSelect.value) && obtenerModoNumeracion() === "continua") {
+    if (
+        !esPlayaEspecial(
+            playaSelect.value
+        ) &&
+        obtenerModoNumeracion() === "continua"
+    ) {
+
         return false;
+
     }
 
     return control.checked;
+
 }
 
-function obtenerClaveProgreso(playa, bloque) {
-    return String(playa || "") + "|" + String(bloque || "");
+function obtenerClaveProgreso(
+    playa,
+    bloque
+) {
+
+    return (
+        String(playa || "") +
+        "|" +
+        String(bloque || "")
+    );
+
 }
 
 function cargarProgresoNumeracion() {
+
     try {
-        return JSON.parse(localStorage.getItem("progresoNumeracionPlaya") || "{}");
+
+        return JSON.parse(
+            localStorage.getItem(
+                "progresoNumeracionPlaya"
+            ) || "{}"
+        );
+
     } catch (e) {
+
         return {};
+
     }
+
 }
 
-let progresoNumeracion = cargarProgresoNumeracion();
+let progresoNumeracion =
+    cargarProgresoNumeracion();
 
 function guardarProgresoNumeracion() {
+
     localStorage.setItem(
         "progresoNumeracionPlaya",
-        JSON.stringify(progresoNumeracion)
+        JSON.stringify(
+            progresoNumeracion
+        )
     );
+
 }
 
-function reiniciarProgresoNumeracion(playa, bloque) {
-    delete progresoNumeracion[obtenerClaveProgreso(playa, bloque)];
+function reiniciarProgresoNumeracion(
+    playa,
+    bloque
+) {
+
+    delete progresoNumeracion[
+        obtenerClaveProgreso(
+            playa,
+            bloque
+        )
+    ];
+
     guardarProgresoNumeracion();
+
 }
 
-function registrarPosicionAsignadaPorEscaner(playa, bloque, posicion) {
-    const clave = obtenerClaveProgreso(playa, bloque);
+function registrarPosicionAsignadaPorEscaner(
+    playa,
+    bloque,
+    posicion
+) {
+
+    const clave =
+        obtenerClaveProgreso(
+            playa,
+            bloque
+        );
+
     progresoNumeracion[clave] = {
-        modo: obtenerModoNumeracion(),
-        inversa: obtenerAsignacionInversa(),
-        inicio: obtenerInicioNumeracion(),
-        posicion: posicion
+
+        modo:
+            obtenerModoNumeracion(),
+
+        inversa:
+            obtenerAsignacionInversa(),
+
+        inicio:
+            obtenerInicioNumeracion(),
+
+        posicion:
+            posicion
+
     };
+
     guardarProgresoNumeracion();
+
 }
 
-function normalizarNumeroParaDireccion(numero, modo, inversa) {
+function normalizarNumeroParaDireccion(
+    numero,
+    modo,
+    inversa
+) {
+
     numero = Number(numero);
 
-    if (!Number.isFinite(numero) || numero < 1) {
-        numero = inversa ? 2 : 1;
+    if (
+        !Number.isFinite(numero) ||
+        numero < 1
+    ) {
+
+        numero =
+            inversa
+                ? 2
+                : 1;
+
     }
 
     // La paridad siempre la determina el modo seleccionado.
-    // La inversa solo cambia la direccion de la secuencia.
-    if (modo === "pares" && numero % 2 !== 0) {
-        numero += inversa ? -1 : 1;
+    // La inversa solo cambia la direccion.
+
+    if (
+        modo === "pares" &&
+        numero % 2 !== 0
+    ) {
+
+        numero +=
+            inversa
+                ? -1
+                : 1;
+
     }
 
-    if (modo === "impares" && numero % 2 === 0) {
-        numero += inversa ? -1 : 1;
+    if (
+        modo === "impares" &&
+        numero % 2 === 0
+    ) {
+
+        numero +=
+            inversa
+                ? -1
+                : 1;
+
     }
 
     return numero;
+
 }
 
-function normalizarPrimerNumero(numero) {
+function normalizarPrimerNumero(
+    numero
+) {
+
     return normalizarNumeroParaDireccion(
         numero,
         obtenerModoNumeracion(),
         obtenerAsignacionInversa()
     );
+
 }
 
-function obtenerSiguienteNumeroNormal(playa, bloque) {
-    const modo = obtenerModoNumeracion();
-    const inversa = obtenerAsignacionInversa();
-    const inicio = obtenerInicioNumeracion();
-    const clave = obtenerClaveProgreso(playa, bloque);
-    const estado = progresoNumeracion[clave];
+function obtenerSiguienteNumeroNormal(
+    playa,
+    bloque
+) {
+
+    const modo =
+        obtenerModoNumeracion();
+
+    const inversa =
+        obtenerAsignacionInversa();
+
+    const inicio =
+        obtenerInicioNumeracion();
+
+    const clave =
+        obtenerClaveProgreso(
+            playa,
+            bloque
+        );
+
+    const estado =
+        progresoNumeracion[
+            clave
+        ];
 
     let candidato;
 
@@ -614,35 +910,112 @@ function obtenerSiguienteNumeroNormal(playa, bloque) {
         estado.inversa !== inversa ||
         Number(estado.inicio) !== Number(inicio)
     ) {
-        candidato = normalizarNumeroParaDireccion(inicio, modo, inversa);
+
+        candidato =
+            normalizarNumeroParaDireccion(
+                inicio,
+                modo,
+                inversa
+            );
+
     } else {
-        const paso = (modo === "pares" || modo === "impares") ? 2 : 1;
-        candidato = Number(estado.posicion) + (inversa ? -paso : paso);
+
+        const paso =
+            (
+                modo === "pares" ||
+                modo === "impares"
+            )
+                ? 2
+                : 1;
+
+        candidato =
+            Number(estado.posicion) +
+            (
+                inversa
+                    ? -paso
+                    : paso
+            );
+
     }
 
-    const paso = (modo === "pares" || modo === "impares") ? 2 : 1;
-    const posicionesOcupadas = new Set(
-        vehiculos
-            .filter(function(v) {
-                return v.playa === playa && v.bloque === bloque;
-            })
-            .map(function(v) { return Number(v.posicion); })
-            .filter(function(n) { return Number.isFinite(n) && n >= 1; })
-    );
+    const paso =
+        (
+            modo === "pares" ||
+            modo === "impares"
+        )
+            ? 2
+            : 1;
 
-    while (candidato >= 1 && posicionesOcupadas.has(candidato)) {
-        candidato += inversa ? -paso : paso;
+    const posicionesOcupadas =
+        new Set(
+            vehiculos
+                .filter(function(v) {
+
+                    return (
+                        v.playa === playa &&
+                        v.bloque === bloque
+                    );
+
+                })
+                .map(function(v) {
+
+                    return Number(
+                        v.posicion
+                    );
+
+                })
+                .filter(function(n) {
+
+                    return (
+                        Number.isFinite(n) &&
+                        n >= 1
+                    );
+
+                })
+        );
+
+    while (
+        candidato >= 1 &&
+        posicionesOcupadas.has(candidato)
+    ) {
+
+        candidato +=
+            inversa
+                ? -paso
+                : paso;
+
     }
 
-    return candidato >= 1 ? candidato : null;
+    return candidato >= 1
+        ? candidato
+        : null;
+
 }
 
-function obtenerSiguientePosicionEspecialDesdeProgreso(playa, bloque) {
-    const modo = obtenerModoNumeracion();
-    const inversa = obtenerAsignacionInversa();
-    const inicio = obtenerInicioNumeracionEspecial();
-    const clave = obtenerClaveProgreso(playa, bloque);
-    const estado = progresoNumeracion[clave];
+function obtenerSiguientePosicionEspecialDesdeProgreso(
+    playa,
+    bloque
+) {
+
+    const modo =
+        obtenerModoNumeracion();
+
+    const inversa =
+        obtenerAsignacionInversa();
+
+    const inicio =
+        obtenerInicioNumeracionEspecial();
+
+    const clave =
+        obtenerClaveProgreso(
+            playa,
+            bloque
+        );
+
+    const estado =
+        progresoNumeracion[
+            clave
+        ];
 
     let calle;
     let fila;
@@ -653,58 +1026,146 @@ function obtenerSiguientePosicionEspecialDesdeProgreso(playa, bloque) {
         estado.inversa !== inversa ||
         Number(estado.inicio) !== Number(inicio)
     ) {
+
         calle = inicio;
-        fila = modo === "porFila" ? obtenerFilaInicial() : (inversa ? 5 : 1);
+
+        fila =
+            modo === "porFila"
+                ? obtenerFilaInicial()
+                : (
+                    inversa
+                        ? 5
+                        : 1
+                );
+
     } else {
-        const p = parsearPosicionEspecial(estado.posicion);
+
+        const p =
+            parsearPosicionEspecial(
+                estado.posicion
+            );
+
         if (!p) {
+
             calle = inicio;
-            fila = inversa ? 5 : (modo === "porFila" ? obtenerFilaInicial() : 1);
+
+            fila =
+                inversa
+                    ? 5
+                    : (
+                        modo === "porFila"
+                            ? obtenerFilaInicial()
+                            : 1
+                    );
+
         } else {
+
             calle = p.calle;
             fila = p.fila;
 
             if (modo === "porFila") {
-                calle += inversa ? -1 : 1;
-                fila = obtenerFilaInicial();
+
+                calle +=
+                    inversa
+                        ? -1
+                        : 1;
+
+                fila =
+                    obtenerFilaInicial();
+
             } else if (inversa) {
+
                 fila--;
+
                 if (fila < 1) {
+
                     calle--;
                     fila = 5;
+
                 }
+
             } else {
+
                 fila++;
+
                 if (fila > 5) {
+
                     calle++;
                     fila = 1;
+
                 }
+
             }
+
         }
+
     }
 
     while (calle >= 1) {
-        const posicion = convertirPosicionEspecial(calle, fila);
-        if (!posicionEspecialOcupada(playa, bloque, calle, fila)) {
+
+        const posicion =
+            convertirPosicionEspecial(
+                calle,
+                fila
+            );
+
+        if (
+            !posicionEspecialOcupada(
+                playa,
+                bloque,
+                calle,
+                fila
+            )
+        ) {
+
             return posicion;
+
         }
 
         if (modo === "porFila") {
-            calle += inversa ? -1 : 1;
-            fila = obtenerFilaInicial();
+
+            calle +=
+                inversa
+                    ? -1
+                    : 1;
+
+            fila =
+                obtenerFilaInicial();
+
         } else if (inversa) {
+
             fila--;
-            if (fila < 1) { calle--; fila = 5; }
+
+            if (fila < 1) {
+
+                calle--;
+                fila = 5;
+
+            }
+
         } else {
+
             fila++;
-            if (fila > 5) { calle++; fila = 1; }
+
+            if (fila > 5) {
+
+                calle++;
+                fila = 1;
+
+            }
+
         }
+
     }
 
     return null;
+
 }
 
-function convertirPosicionEspecial(calle, fila) {
+function convertirPosicionEspecial(
+    calle,
+    fila
+) {
 
     return (
         Number(calle) +
@@ -714,25 +1175,33 @@ function convertirPosicionEspecial(calle, fila) {
 
 }
 
-function parsearPosicionEspecial(posicion) {
+function parsearPosicionEspecial(
+    posicion
+) {
 
-    const texto = String(posicion || "").trim();
+    const texto =
+        String(
+            posicion || ""
+        ).trim();
 
-    const partes = texto.split("-");
+    const partes =
+        texto.split("-");
 
     if (partes.length !== 2) {
         return null;
     }
 
-    const calle = parseInt(
-        partes[0],
-        10
-    );
+    const calle =
+        parseInt(
+            partes[0],
+            10
+        );
 
-    const fila = parseInt(
-        partes[1],
-        10
-    );
+    const fila =
+        parseInt(
+            partes[1],
+            10
+        );
 
     if (
         !Number.isFinite(calle) ||
@@ -741,7 +1210,9 @@ function parsearPosicionEspecial(posicion) {
         fila < 1 ||
         fila > 5
     ) {
+
         return null;
+
     }
 
     return {
@@ -764,7 +1235,9 @@ function obtenerPosicionesEspecialesOcupadas(
                 excluirVehiculo &&
                 v.id === excluirVehiculo.id
             ) {
+
                 return false;
+
             }
 
             return (
@@ -781,7 +1254,9 @@ function obtenerPosicionesEspecialesOcupadas(
 
         })
         .filter(function(p) {
+
             return p !== null;
+
         });
 
 }
@@ -800,19 +1275,24 @@ function posicionEspecialOcupada(
             excluirVehiculo &&
             v.id === excluirVehiculo.id
         ) {
+
             return false;
+
         }
 
         if (
             v.playa !== playa ||
             v.bloque !== bloque
         ) {
+
             return false;
+
         }
 
-        const p = parsearPosicionEspecial(
-            v.posicion
-        );
+        const p =
+            parsearPosicionEspecial(
+                v.posicion
+            );
 
         if (!p) {
             return false;
@@ -831,37 +1311,78 @@ function obtenerProximaPosicionEspecial(
     playa,
     bloque
 ) {
-    return obtenerSiguientePosicionEspecialDesdeProgreso(playa, bloque);
+
+    return obtenerSiguientePosicionEspecialDesdeProgreso(
+        playa,
+        bloque
+    );
+
 }
 
-function obtenerUbicacionNormal(posicion) {
-    const numero = Number(posicion);
+function obtenerUbicacionNormal(
+    posicion
+) {
 
-    if (!Number.isFinite(numero) || numero < 1) {
+    const numero =
+        Number(posicion);
+
+    if (
+        !Number.isFinite(numero) ||
+        numero < 1
+    ) {
+
         return null;
+
     }
 
     return {
-        carril: numero % 2 === 0 ? numero - 1 : numero,
-        posicion: numero
+
+        carril:
+            numero % 2 === 0
+                ? numero - 1
+                : numero,
+
+        posicion:
+            numero
+
     };
+
 }
 
-function formatearUbicacionNormal(posicion) {
-    const u = obtenerUbicacionNormal(posicion);
+function formatearUbicacionNormal(
+    posicion
+) {
+
+    const u =
+        obtenerUbicacionNormal(
+            posicion
+        );
 
     return u
         ? `Carril ${u.carril} - Posicion ${u.posicion}`
         : String(posicion);
+
 }
 
 function obtenerProximaPosicion(
     playa,
     bloque
 ) {
-    if (esPlayaEspecial(playa)) {
-        return obtenerProximaPosicionEspecial(playa, bloque);
+
+    if (
+        esPlayaEspecial(playa)
+    ) {
+
+        return obtenerProximaPosicionEspecial(
+            playa,
+            bloque
+        );
+
     }
 
-    return obtenerSiguienteNumeroNormal(playa, bloque);
+    return obtenerSiguienteNumeroNormal(
+        playa,
+        bloque
+    );
+
 }
