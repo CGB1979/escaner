@@ -1,0 +1,1115 @@
+#header_container,
+#nav_container,
+#pre_content,
+#title,
+#counter,
+#post_content,
+#sidebar_container,
+header.header#forFixedElement,
+header.header.fixed,
+header.header.fixed.clearfix,
+header.header.fixed.clearfix.animated.object-visible.fadeInDown,
+.main-navigation,
+#selfpromotionOverlay,
+a[href*="paginawebgratis.es"][rel="nofollow"],
+footer,
+.footer,
+#footer {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+a.menu[href="/Home.htm"],
+a.menu[href="/Contacto.htm"],
+a.menu[href="/Libro-de-visitantes.htm"] {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+img[src*="arrow.gif"] {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+td[background*="navi.gif"] strong,
+td[background*="header.gif"] .Stil1 {
+    display: none !important;
+    visibility: hidden !important;
+}
+
+a[href="/Home.htm"],
+a[href="/Contacto.htm"],
+a[href="/Libro-de-visitantes.htm"] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    min-height: 100%;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #ffffff !important;
+    color: #222;
+}
+
+body {
+    min-height: 100vh;
+}
+
+button,
+select,
+input {
+    font-family: inherit;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#app-shell {
+    width: 100%;
+    min-height: 100vh;
+    background: #f5f7fa;
+    padding-bottom: 30px;
+}
+
+.app-wrapper {
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.app-header {
+    background: #548235;
+    color: white;
+    padding: 18px 18px 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+
+.app-header h1 {
+    margin: 0;
+    font-size: 23px;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+.app-header p {
+    margin: 6px 0 0;
+    font-size: 13px;
+    opacity: .9;
+}
+
+.container {
+    width: 100%;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 18px 16px 35px;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+    border: 1px solid #edf0f3;
+}
+
+.card h2 {
+    margin: 0 0 15px;
+    font-size: 22px;
+    color: #30343a;
+}
+
+.card h3 {
+    margin: 0 0 12px;
+    font-size: 19px;
+    color: #30343a;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.section-title h2,
+.section-title h3 {
+    margin: 0;
+}
+
+.section-subtitle {
+    color: #6c757d;
+    font-size: 13px;
+    line-height: 1.45;
+    margin: -8px 0 15px;
+}
+
+.form-group {
+    margin-bottom: 13px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #343a40;
+    font-size: 14px;
+}
+
+select,
+input {
+    width: 100%;
+    padding: 13px 12px;
+    font-size: 16px;
+    border: 1px solid #cfd4da;
+    border-radius: 9px;
+    background: white;
+    color: #212529;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+}
+/* Igualar altura de Numero inicial y Fila inicial */
+#numeroInicial,
+#filaInicial {
+    height: 48px;
+    box-sizing: border-box;
+}
+
+select:focus,
+input:focus {
+    border-color: #70ad47;
+    box-shadow: 0 0 0 3px rgba(112,173,71,.12);
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.numbering-options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 5px;
+}
+
+/* Playas especiales: cuando aparece la opcion "Por fila", hay solo dos botones visibles. */
+.numbering-options:has(#modoPorFilaContainer:not(.hidden)) {
+    grid-template-columns: 1fr 1fr;
+}
+
+.numbering-option {
+    position: relative;
+}
+
+.numbering-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.numbering-option label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 8px 6px;
+    margin: 0;
+    border: 1px solid #ccd3da;
+    border-radius: 9px;
+    background: #fff;
+    color: #495057;
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all .15s;
+}
+
+.numbering-option input:checked + label {
+    border-color: #70ad47;
+    background: #e2f0d9;
+    color: #548235;
+    box-shadow: inset 0 0 0 1px #70ad47;
+}
+
+.numbering-help {
+    margin-top: 9px;
+    padding: 10px 12px;
+    background: #f1f8ed;
+    border-radius: 8px;
+    color: #5f6b76;
+    font-size: 13px;
+    line-height: 1.4;
+    cursor: default;
+    user-select: none;
+    transition: background .15s, border-color .15s;
+}
+
+.numbering-help.editable-j {
+    cursor: pointer;
+    border: 1px dashed #70ad47;
+}
+
+.numbering-help.editable-j:hover {
+    background: #e2f0d9;
+    color: #548235;
+}
+
+.start-number-container {
+    margin-top: 13px;
+}
+
+button {
+    border: none;
+    border-radius: 9px;
+    padding: 13px 16px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .08s, opacity .15s;
+}
+
+button:active {
+    transform: scale(.98);
+}
+
+button:disabled {
+    background: #aaa !important;
+    cursor: not-allowed;
+    opacity: .7;
+}
+
+.btn-primary {
+    background: #70ad47;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #548235;
+}
+
+.btn-success {
+    background: #198754;
+    color: white;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-warning {
+    background: #e09a25;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-dark {
+    background: #212529;
+    color: white;
+}
+
+.big-button {
+    width: 100%;
+    font-size: 17px;
+    padding: 15px;
+    margin-top: 15px;
+}
+.btn-rebotador {
+    background: #4aaed6;
+    color: white;
+}
+
+.btn-rebotador-back {
+    background: #4aaed6;
+    color: white;
+    margin-top: 12px;
+}
+
+.btn-rebotador-back:hover {
+    background: #318fb7;
+}
+
+.location-preview.valid {
+    background: #edf8ef;
+    border-color: #b9dfbf;
+    color: #28763d;
+}
+
+.location-preview.invalid {
+    background: #fff2f2;
+    border-color: #efc1c1;
+    color: #b13b3b;
+}
+
+#btnGuardarCambioUbicacion:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.current-location {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 14px;
+    background: #f1f8ed;
+    border: 1px solid #c6e0b4;
+    border-radius: 10px;
+    margin-bottom: 14px;
+}
+
+.current-location-info {
+    min-width: 0;
+}
+
+.current-location-label {
+    display: block;
+    color: #687580;
+    font-size: 12px;
+    margin-bottom: 3px;
+}
+
+.current-location-value {
+    color: #548235;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.btn-change-location {
+    flex-shrink: 0;
+    padding: 9px 11px;
+    font-size: 13px;
+}
+
+.summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.summary-box {
+    background: #f1f8ed;
+    border-radius: 10px;
+    padding: 13px 10px;
+    text-align: center;
+}
+
+.summary-label {
+    display: block;
+    font-size: 13px;
+    color: #444;
+    margin-bottom: 7px;
+}
+
+.summary-box .number {
+    display: block;
+    font-size: 28px;
+    line-height: 1.1;
+    font-weight: bold;
+    color: #548235;
+}
+
+#proximaPosicion {
+    font-size: clamp(18px, 4vw, 24px);
+    line-height: 1.12;
+    white-space: nowrap;
+}
+
+#proximaPosicion .next-position-line {
+    font-size: 0.78em;
+    font-weight: 700;
+}
+
+.vehicle {
+    border: 1px solid #e0e4e8;
+    border-radius: 10px;
+    padding: 13px;
+    margin-bottom: 9px;
+    background: #fafbfc;
+}
+
+.vehicle:last-child {
+    margin-bottom: 0;
+}
+
+.vehicle-position {
+    font-size: 21px;
+    font-weight: bold;
+    color: #548235;
+}
+
+.vehicle-chassis {
+    font-family: monospace;
+    font-size: 16px;
+    margin-top: 5px;
+    word-break: break-all;
+}
+
+.vehicle-info {
+    color: #666;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.vehicle-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.vehicle-actions button {
+    font-size: 14px;
+    padding: 10px;
+}
+
+.empty {
+    text-align: center;
+    color: #777;
+    padding: 25px 10px;
+}
+
+.warning {
+    background: #fff3cd;
+    border: 1px solid #ffe69c;
+    color: #664d03;
+    border-radius: 9px;
+    padding: 12px;
+    margin: 10px 0;
+}
+
+.success-message {
+    background: #d1e7dd;
+    color: #0f5132;
+    padding: 12px;
+    border-radius: 9px;
+    margin-bottom: 10px;
+}
+
+.danger-message {
+    background: #f8d7da;
+    color: #842029;
+    padding: 12px;
+    border-radius: 9px;
+    margin-bottom: 10px;
+}
+
+.top-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+#scannerModal {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.scanner-header {
+    flex: 0 0 48px;
+    background: #111;
+    color: white;
+    padding: 7px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 20;
+}
+
+.scanner-header h2 {
+    margin: 0;
+    font-size: 17px;
+}
+
+.scanner-header button {
+    padding: 7px 15px;
+    font-size: 17px;
+}
+
+.scanner-camera {
+    position: relative;
+    flex: 0 0 40vh;
+    min-height: 250px;
+    max-height: 430px;
+    background: #000;
+    overflow: hidden;
+}
+
+#reader {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+}
+
+#reader img {
+    display: none !important;
+}
+
+#reader__scan_region {
+    width: 100% !important;
+    height: 100% !important;
+    background: transparent !important;
+}
+
+#reader video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.scan-mask {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.mask-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(50% - 70px);
+    background: rgba(0,0,0,.62);
+}
+
+.mask-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(50% - 70px);
+    background: rgba(0,0,0,.62);
+}
+
+.mask-left {
+    position: absolute;
+    top: calc(50% - 70px);
+    bottom: calc(50% - 70px);
+    left: 0;
+    width: 5%;
+    background: rgba(0,0,0,.62);
+}
+
+.mask-right {
+    position: absolute;
+    top: calc(50% - 70px);
+    bottom: calc(50% - 70px);
+    right: 0;
+    width: 5%;
+    background: rgba(0,0,0,.62);
+}
+
+.scan-frame {
+    position: absolute;
+    left: 5%;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 140px;
+    border: 3px solid white;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.scan-frame::before,
+.scan-frame::after {
+    content: "";
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    border-color: white;
+    border-style: solid;
+}
+
+.scan-frame::before {
+    top: -3px;
+    left: -3px;
+    border-width: 5px 0 0 5px;
+}
+
+.scan-frame::after {
+    top: -3px;
+    right: -3px;
+    border-width: 5px 5px 0 0;
+}
+
+.scan-help {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 12px;
+    text-align: center;
+    color: white;
+    font-size: 14px;
+    z-index: 15;
+    text-shadow: 0 1px 3px #000;
+}
+
+.scanner-bottom {
+    flex: 1;
+    min-height: 0;
+    background: #111;
+    color: white;
+    padding: 10px 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.scanner-location {
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.35;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.scan-result {
+    background: white;
+    color: #222;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+}
+
+.scan-result h3 {
+    margin: 0 0 6px;
+    font-size: 18px;
+}
+
+.scan-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.scan-buttons button {
+    width: 100%;
+    padding: 11px 8px;
+    font-size: 14px;
+}
+
+#btnIngresarManual {
+    width: 100%;
+    margin-top: 12px;
+    padding: 13px;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+#btnSalirScanner {
+    width: 100%;
+    margin-top: 24px;
+    padding: 12px;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+
+.scanner-status {
+    text-align: center;
+    font-size: 13px;
+    color: #ccc;
+    margin-top: 7px;
+    flex-shrink: 0;
+}
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.65);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.modal-content {
+    width: 100%;
+    max-width: 500px;
+    max-height: calc(100vh - 30px);
+    overflow-y: auto;
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.modal-content h2 {
+    margin: 0 0 8px;
+    color: #30343a;
+}
+
+.modal-description {
+    margin: 0 0 17px;
+    color: #6c757d;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.modal-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.location-preview {
+    background: #f1f8ed;
+    border: 1px solid #c6e0b4;
+    color: #548235;
+    border-radius: 9px;
+    padding: 11px;
+    margin-top: 13px;
+    font-size: 14px;
+}
+
+.position-hint {
+    margin-top: 7px;
+    font-size: 12px;
+    color: #6c757d;
+}
+
+@media (max-width: 600px) {
+
+    #app-shell {
+        min-height: 100vh;
+    }
+
+    .app-header {
+        padding: 16px 14px 18px;
+    }
+
+    .app-header h1 {
+        font-size: 21px;
+    }
+
+    .container {
+        padding: 13px 10px 25px;
+    }
+
+    .card {
+        padding: 14px;
+        margin-bottom: 11px;
+        border-radius: 13px;
+    }
+
+    .card h2 {
+        font-size: 20px;
+    }
+
+    .row {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    }
+
+    .numbering-options {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+    }
+
+    /* En playas especiales, los dos botones ocupan el mismo ancho que Playa y Bloque. */
+    .numbering-options:has(#modoPorFilaContainer:not(.hidden)) {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .numbering-option label {
+        font-size: 12px;
+        min-height: 48px;
+    }
+
+    .current-location {
+        align-items: flex-start;
+    }
+
+    .btn-change-location {
+        font-size: 12px;
+        padding: 8px 9px;
+    }
+
+    .vehicle-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .top-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* =========================================
+   BOTONES INFERIORES FIJOS
+========================================= */
+
+.vehicle-list-card {
+    padding-bottom: 18px;
+}
+
+.vehicle-list-scroll {
+    max-height: calc(100vh - 220px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.fixed-bottom-actions {
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 720px;
+    background: #5f9a3d !important;
+    padding: 6px 16px 7px;
+    border-top: 2px solid #d9dee3;
+    box-shadow: 0 -3px 12px rgba(0,0,0,.10);
+    z-index: 900;
+}
+
+.fixed-bottom-actions button {
+    padding: 8px 16px;
+}
+
+    .scan-frame {
+        left: 3%;
+        right: 3%;
+        height: 125px;
+    }
+
+    .mask-left,
+    .mask-right {
+        width: 3%;
+    }
+
+    .mask-top {
+        height: calc(50% - 62px);
+    }
+
+    .mask-bottom {
+        height: calc(50% - 62px);
+    }
+
+    .mask-left,
+    .mask-right {
+        top: calc(50% - 62px);
+        bottom: calc(50% - 62px);
+    }
+}
+
+@media (max-width: 380px) {
+
+    .summary-box .number {
+        font-size: 25px;
+    }
+
+    .numbering-option label {
+        font-size: 11px;
+    }
+
+    .current-location {
+        flex-direction: column;
+    }
+
+    .btn-change-location {
+        width: 100%;
+    }
+}
+
+@media (max-height: 700px) {
+
+    .scanner-camera {
+        flex-basis: 35vh;
+        min-height: 210px;
+    }
+
+    .scan-frame {
+        height: 115px;
+    }
+
+    .scanner-location {
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    #btnSalirScanner {
+        padding: 9px;
+    }
+}
+
+/* Modal reutilizable para reemplazar cuadros nativos del navegador */
+.modal-buttons.app-dialog-one-button { grid-template-columns: 1fr; }
+
+/* ===== REBOTADOR ===== */
+.excel-status{margin-top:12px;padding:10px 12px;border-radius:9px;background:#f3f6f8;color:#5c6670;font-size:13px;word-break:break-word}
+.vehicle-moved{margin-top:10px;padding:9px 10px;border-radius:8px;background:#fff1e6;border:1px solid #f2c49e;color:#8a4d1e;font-size:13px;line-height:1.35}
+.scan-buttons{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.scan-buttons button{min-height:50px}
+.coincidencias-list{display:grid;gap:9px;max-height:50vh;overflow:auto;margin:14px 0}.coincidencia-item{width:100%;text-align:left;background:#fff;border:1px solid #d7dde3;border-radius:10px;padding:12px;color:#30343a}.coincidencia-item span{font-size:13px;color:#6c757d}
+@media(max-width:520px){.scan-buttons{grid-template-columns:1fr}.vehicle-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}.vehicle-actions button{width:100%!important;margin:0!important}}
+
+
+/* =========================================================
+   REBOTADOR - AJUSTES DE INTERFAZ
+   ========================================================= */
+
+.excel-buttons-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 10px;
+    width: 100%;
+}
+
+.excel-action-button {
+    width: 100%;
+    min-width: 0;
+    height: 50px;
+    padding: 8px 10px;
+    background: #4aaed6 !important;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 1.1;
+}
+
+#btnBuscarExcel.excel-cargado {
+    background: #e8ad62 !important;
+}
+
+.excel-action-button:hover:not(:disabled) {
+    background: #3699c1 !important;
+}
+
+.excel-action-button:disabled {
+    background: #4aaed6 !important;
+    opacity: .55;
+}
+
+.excel-status {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 9px;
+    background: #f3f6f8;
+    color: #5c6670;
+    font-size: 13px;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.excel-status strong {
+    color: #343a40;
+}
+
+.vehicle-moved {
+    margin-top: 10px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    background: #fff1e6;
+    border: 1px solid #f2c49e;
+    color: #8a4d1e;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.cambio-vehiculo-info {
+    margin: 10px 0 18px;
+    padding: 13px;
+    border: 1px solid #dfe5ea;
+    border-radius: 10px;
+    background: #f8fafb;
+}
+
+.cambio-chasis {
+    color: #30343a;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.cambio-chasis span {
+    font-family: monospace;
+    font-weight: 700;
+    word-break: break-all;
+}
+
+.cambio-ubicacion-actual {
+    padding-top: 9px;
+    border-top: 1px solid #e2e6ea;
+    color: #5f6870;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+#locationModal .modal-content {
+    max-width: 540px;
+}
+
+#cambioPlaya,
+#cambioBloque,
+#cambioCarril,
+#cambioPosicion {
+    height: 48px;
+    min-width: 0;
+}
+
+@media (max-width: 600px) {
+    .excel-buttons-row {
+        gap: 8px;
+    }
+
+    .excel-action-button {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .fixed-bottom-actions {
+        left: 0;
+        transform: none;
+        max-width: none;
+    }
+}
