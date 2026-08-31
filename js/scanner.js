@@ -569,7 +569,7 @@ function mostrarVehiculoExistente(v) {
 
 }
 
-function aceptarScan() {
+async function aceptarScan() {
 
     if (!resultadoPendiente) {
         return;
@@ -594,7 +594,7 @@ function aceptarScan() {
 
 }
 
-function guardarNuevoVehiculo() {
+async function guardarNuevoVehiculo() {
 
     const r = resultadoPendiente;
 
@@ -636,7 +636,7 @@ function guardarNuevoVehiculo() {
 
             reproducirSonidoError(); 
             // EDITABLE: mensaje de ubicacion ocupada
-            mostrarAlerta(
+            await mostrarAlerta(
                 `La ubicacion ${nuevo.posicion} ya esta ocupada.`
             );
 
@@ -659,7 +659,7 @@ function guardarNuevoVehiculo() {
 
         if (posicionOcupada) {
             reproducirSonidoError();
-            mostrarAlerta(
+            await mostrarAlerta(
                 `La posicion ${nuevo.posicion} ya esta ocupada en Playa ${nuevo.playa} - Bloque ${nuevo.bloque}.`
             );
             ultimoCodigo = null;

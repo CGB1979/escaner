@@ -106,6 +106,18 @@ function organizarControlesInicio(modoPorFila) {
 function actualizarControlesPlaya() {
 
     const esJ = esPlayaEspecial(playaSelect.value);
+    const modoActual = obtenerModoNumeracion();
+    const inversaControl = document.getElementById("asignarInversa");
+
+    if (inversaControl) {
+        // En playas normales, Continua no admite asignacion inversa.
+        // Las playas especiales conservan su logica propia de inversion.
+        const habilitada = esJ || modoActual !== "continua";
+        inversaControl.disabled = !habilitada;
+        if (!habilitada && inversaControl.checked) {
+            inversaControl.checked = false;
+        }
+    }
 
     if (!esJ) {
 
@@ -260,20 +272,20 @@ function cargarConfiguracionNumeracion() {
         fila = 1;
     }
 
-    const paridadEfectiva = inversa && (modo === "pares" || modo === "impares")
-        ? (modo === "pares" ? "impares" : "pares")
-        : modo;
-
-    if (paridadEfectiva === "pares" && inicio % 2 !== 0) {
+    if (modo === "pares" && inicio % 2 !== 0) {
         inicio += inversa ? -1 : 1;
     }
 
-    if (paridadEfectiva === "impares" && inicio % 2 === 0) {
+    if (modo === "impares" && inicio % 2 === 0) {
         inicio += inversa ? -1 : 1;
     }
 
-    if (inversa && inicio <= 1) {
-        inicio = (modo === "pares") ? 3 : 2;
+    if (inversa && (modo === "pares" || modo === "impares") && inicio <= 1) {
+        inicio = modo === "pares" ? 2 : 3;
+    }
+
+    if (!esPlayaEspecial(playaSelect.value) && modo === "continua") {
+        inversa = false;
     }
 
     configuracionNumeracion = {
@@ -328,8 +340,8 @@ function ajustarNumeroInicialPorModo() {
         numero = 1;
     }
 
-    if (inversa && numero <= 1) {
-        numero = modo === "pares" ? 3 : 2;
+    if (inversa && (modo === "pares" || modo === "impares") && numero <= 1) {
+        numero = modo === "pares" ? 2 : 3;
     }
 
     numero = normalizarNumeroParaDireccion(
@@ -510,7 +522,16 @@ function obtenerUbicacionSeleccionada() {
 
 function obtenerAsignacionInversa() {
     const control = document.getElementById("asignarInversa");
-    return control ? control.checked : false;
+    if (!control) {
+        return false;
+    }
+
+    // En playas normales, Continua nunca puede trabajar en modo inverso.
+    if (!esPlayaEspecial(playaSelect.value) && obtenerModoNumeracion() === "continua") {
+        return false;
+    }
+
+    return control.checked;
 }
 
 function obtenerClaveProgreso(playa, bloque) {
@@ -557,17 +578,13 @@ function normalizarNumeroParaDireccion(numero, modo, inversa) {
         numero = inversa ? 2 : 1;
     }
 
-    let paridad = modo;
-
-    if (inversa && (modo === "pares" || modo === "impares")) {
-        paridad = modo === "pares" ? "impares" : "pares";
-    }
-
-    if (paridad === "pares" && numero % 2 !== 0) {
+    // La paridad siempre la determina el modo seleccionado.
+    // La inversa solo cambia la direccion de la secuencia.
+    if (modo === "pares" && numero % 2 !== 0) {
         numero += inversa ? -1 : 1;
     }
 
-    if (paridad === "impares" && numero % 2 === 0) {
+    if (modo === "impares" && numero % 2 === 0) {
         numero += inversa ? -1 : 1;
     }
 

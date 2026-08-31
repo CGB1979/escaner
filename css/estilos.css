@@ -359,6 +359,15 @@ input:focus {
     color: #548235;
 }
 
+.switch input:disabled + .slider {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.switch input:disabled + .slider:before {
+    color: #adb5bd;
+}
+
 button {
     border: none;
     border-radius: 9px;
