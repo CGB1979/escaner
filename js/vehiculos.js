@@ -173,8 +173,6 @@ function mostrarVehiculos() {
                         -
                         Bloque ${escapeHTML(v.bloque)}
                         -
-                        Carril ${escapeHTML(ubicacion.carril)}
-                        -
                         ${escapeHTML(ubicacion.posicion)}
                     </div>
                 `;

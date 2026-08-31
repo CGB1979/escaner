@@ -103,7 +103,7 @@ function buscarVehiculo() {
                         -
                         Bloque ${escapeHTML(v.bloque)}
                         -
-                        Ubicacion ${escapeHTML(v.posicion)}
+                        Posicion ${escapeHTML(v.posicion)}
 
                     `;
 
@@ -164,7 +164,7 @@ function eliminarVehiculo(chasis) {
         -
         Bloque ${escapeHTML(v.bloque)}
         -
-        Ubicacion ${escapeHTML(v.posicion)}
+        Posicion ${escapeHTML(v.posicion)}
 
     `;
 
@@ -480,7 +480,7 @@ async function exportarCSV() {
                 if (p) {
                     calle = String(p.carril);
                     fila = String(p.posicion);
-                    ubicacion = `${v.playa} - ${v.bloque} - ${p.carril}`;
+                    ubicacion = `${v.playa} - ${v.bloque} - ${p.posicion}`;
                 } else {
                     ubicacion = `${v.playa} - ${v.bloque} - ${String(v.posicion)}`;
                 }
