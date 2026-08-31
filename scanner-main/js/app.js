@@ -1,5 +1,0 @@
-cargarConfiguracionNumeracion();
-
-actualizarOpcionesPlaya();
-
-actualizarPantalla();
