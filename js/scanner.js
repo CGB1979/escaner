@@ -321,7 +321,8 @@ reproducirSonidoNuevo();
         chasis: chasis,
         playa: ubicacion.playa,
         bloque: ubicacion.bloque,
-        posicion: posicion
+        posicion: posicion,
+        observaciones: ""
 
     };
 
@@ -419,7 +420,7 @@ reproducirSonidoNuevo();
     document
         .getElementById("btnAceptarScan")
         .innerText =
-        "Aceptar y guardar";
+        "Aceptar";
 
     document
         .getElementById("btnAceptarScan")
@@ -569,6 +570,14 @@ function mostrarVehiculoExistente(v) {
 
 }
 
+function abrirObservacionesResultadoScan() {
+    if (!resultadoPendiente) return;
+    const vehiculo = resultadoPendiente.tipo === "existente"
+        ? resultadoPendiente.vehiculo
+        : resultadoPendiente;
+    abrirObservaciones(vehiculo);
+}
+
 async function aceptarScan() {
 
     if (!resultadoPendiente) {
@@ -612,6 +621,9 @@ async function guardarNuevoVehiculo() {
             esPlayaEspecial(r.playa)
                 ? String(r.posicion)
                 : Number(r.posicion),
+
+        observaciones:
+            String(r.observaciones || "").trim(),
 
         fecha:
             new Date().toISOString()

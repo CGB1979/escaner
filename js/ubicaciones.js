@@ -915,6 +915,11 @@ function confirmarCambioUbicacion() {
     cambioDesdeScanner = false;
 
 }
+function abrirObservacionesCambioUbicacion() {
+    if (!vehiculoCambioUbicacion) return;
+    abrirObservaciones(vehiculoCambioUbicacion);
+}
+
 function cerrarCambioUbicacion() {
 
     document

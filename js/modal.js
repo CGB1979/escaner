@@ -98,6 +98,27 @@
         });
     };
 
+    window.abrirObservaciones = function (vehiculo) {
+        if (!vehiculo) return;
+
+        const chasis = String(vehiculo.chasis || "").trim();
+        const valorActual = String(vehiculo.observaciones || "");
+
+        mostrarPrompt(
+            "Escriba la observación del vehículo." + (chasis ? `\n\nChasis: ${chasis}` : ""),
+            valorActual,
+            "Observaciones"
+        ).then(function (resultado) {
+            if (resultado === null) return;
+
+            vehiculo.observaciones = String(resultado || "").trim();
+
+            if (typeof guardarDatos === "function") guardarDatos();
+            if (typeof actualizarPantalla === "function") actualizarPantalla();
+            if (typeof actualizarEstadoExcel === "function") actualizarEstadoExcel();
+        });
+    };
+
     window.mostrarPrompt = function (mensaje, valorInicial, titulo) {
         return abrirDialogo({
             type: "prompt",

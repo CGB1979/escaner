@@ -278,6 +278,11 @@ function abrirCambioUbicacionVehiculo(id, obj) {
   document.getElementById("locationModal").classList.remove("hidden");
 }
 
+function abrirObservacionesCambioUbicacion() {
+  if (!vehiculoActual) return;
+  abrirObservaciones(vehiculoActual);
+}
+
 function cerrarCambioUbicacion() {
   document.getElementById("locationModal").classList.add("hidden");
 

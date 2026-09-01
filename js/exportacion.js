@@ -401,6 +401,12 @@ async function exportarCSV() {
                 header: "Ubicacion",
                 key: "ubicacion",
                 width: 18
+            },
+
+            {
+                header: "Observacion",
+                key: "observacion",
+                width: 35
             }
 
         ];
@@ -424,7 +430,7 @@ async function exportarCSV() {
 
         };
 
-        for (let c = 1; c <= 6; c++) {
+        for (let c = 1; c <= 7; c++) {
     encabezado.getCell(c).fill = {
         type: "pattern",
         pattern: "solid",
@@ -528,7 +534,10 @@ async function exportarCSV() {
                         String(fila),
 
                     ubicacion:
-                        ubicacion
+                        ubicacion,
+
+                    observacion:
+                        String(v.observaciones || "")
 
                 });
 
@@ -541,7 +550,7 @@ async function exportarCSV() {
 
             for (
                 let c = 1;
-                c <= 6;
+                c <= 7;
                 c++
             ) {
 
@@ -585,7 +594,7 @@ async function exportarCSV() {
                 "A1",
 
             to:
-                "F" +
+                "G" +
                 (vehiculos.length + 1)
 
         };
