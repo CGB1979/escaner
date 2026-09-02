@@ -545,9 +545,26 @@ button:disabled {
     margin-top: 10px;
 }
 
+.vehicle-observation {
+    color: #5f6870;
+    font-size: 13px;
+    line-height: 1.35;
+    margin-top: 7px;
+    padding: 7px 9px;
+    border-radius: 7px;
+    background: #fff7e6;
+    border: 1px solid #f0c36d;
+    overflow-wrap: anywhere;
+}
+
 .vehicle-actions button {
-    font-size: 14px;
-    padding: 10px;
+    min-height: 42px;
+    height: 42px;
+    padding: 7px 8px;
+    font-size: clamp(11px, 2.8vw, 14px);
+    line-height: 1.1;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 
 .empty {
@@ -932,6 +949,13 @@ button:disabled {
 
     .vehicle-actions {
         grid-template-columns: 1fr 1fr;
+    }
+
+    .vehicle-actions button {
+        min-height: 40px;
+        height: 40px;
+        padding: 6px 7px;
+        font-size: clamp(10px, 3vw, 13px);
     }
 
     .top-buttons {

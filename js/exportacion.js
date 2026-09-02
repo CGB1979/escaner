@@ -300,6 +300,10 @@ function confirmarBorrarTodo() {
 
             vehiculos = [];
 
+            if (typeof reiniciarTodoProgresoNumeracion === "function") {
+                reiniciarTodoProgresoNumeracion();
+            }
+
             guardarDatos();
             cerrarConfirmacion();
             actualizarPantalla();

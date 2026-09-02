@@ -766,6 +766,11 @@ function guardarProgresoNumeracion() {
 
 }
 
+function reiniciarTodoProgresoNumeracion() {
+    progresoNumeracion = {};
+    guardarProgresoNumeracion();
+}
+
 function reiniciarProgresoNumeracion(
     playa,
     bloque
@@ -974,6 +979,16 @@ function obtenerSiguienteNumeroNormal(
                 })
         );
 
+    // Si esta Playa + Bloque no tiene vehículos, el progreso anterior
+    // no debe seguir condicionando la próxima asignación.
+    if (posicionesOcupadas.size === 0) {
+        return normalizarNumeroParaDireccion(
+            inicio,
+            modo,
+            inversa
+        );
+    }
+
     while (
         candidato >= 1 &&
         posicionesOcupadas.has(candidato)
@@ -1017,10 +1032,28 @@ function obtenerSiguientePosicionEspecialDesdeProgreso(
             clave
         ];
 
+    const hayVehiculosEnUbicacion = vehiculos.some(function(v) {
+        return (
+            v.playa === playa &&
+            v.bloque === bloque &&
+            parsearPosicionEspecial(v.posicion) !== null
+        );
+    });
+
     let calle;
     let fila;
 
-    if (
+    if (!hayVehiculosEnUbicacion) {
+        calle = inicio;
+        fila =
+            modo === "porFila"
+                ? obtenerFilaInicial()
+                : (
+                    inversa
+                        ? 5
+                        : 1
+                );
+    } else if (
         !estado ||
         estado.modo !== modo ||
         estado.inversa !== inversa ||

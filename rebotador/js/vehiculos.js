@@ -13,7 +13,27 @@ function etiquetaPosicion(playa) {
 }
 
 function ubicacionTexto(v) {
-  return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Carril ${v.carril || "—"} - ${etiquetaPosicion(v.playa)} ${v.posicion || "—"}`;
+  if (v && v.ubicacion) {
+    return String(v.ubicacion);
+  }
+
+  if (esPlayaEspecial(v.playa)) {
+    const p = parsearPosicionEspecial(v.posicion);
+
+    if (p) {
+      return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Carril ${p.calle} - Posicion ${p.fila}`;
+    }
+
+    return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${v.posicion || "—"}`;
+  }
+
+  // Mantener en la tarjeta el mismo formato de ubicación que utiliza
+  // el escáner normal para playas comunes.
+  if (v.playa || v.bloque || v.posicion) {
+    return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${v.posicion || "—"}`;
+  }
+
+  return "Sin ubicación";
 }
 
 function actualizarPantalla() {
@@ -53,10 +73,11 @@ function actualizarPantalla() {
       <div class="vehicle-position">Chasis</div>
       <div class="vehicle-chassis">${escapeHTML(v.chasis)}</div>
       <div class="vehicle-info">${escapeHTML(ubicacionTexto(v))}</div>
+      ${v.observaciones ? `<div class="vehicle-observation"><strong>Observación:</strong> ${escapeHTML(v.observaciones)}</div>` : ""}
       ${v.movidoDesde ? `<div class="vehicle-moved">Movido desde: ${escapeHTML(v.movidoDesde)}</div>` : ""}
       <div class="vehicle-actions">
         <button class="btn-warning" type="button" onclick="abrirCambioUbicacionVehiculo('${v.id}')">Cambiar ubicación</button>
-        <button class="btn-danger" type="button" onclick="eliminarVehiculo('${v.id}')">Borrar</button>
+        <button class="btn-danger" type="button" onclick="eliminarVehiculo('${v.id}')">Eliminar</button>
       </div>
     </div>
   `).join("");

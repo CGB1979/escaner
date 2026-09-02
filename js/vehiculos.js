@@ -1,3 +1,25 @@
+function ubicacionTexto(v) {
+    if (v && v.ubicacion) {
+        return String(v.ubicacion);
+    }
+
+    if (esPlayaEspecial(v.playa)) {
+        const p = parsearPosicionEspecial(v.posicion);
+
+        if (p) {
+            return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Carril ${p.calle} - Posicion ${p.fila}`;
+        }
+
+        return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${v.posicion || "—"}`;
+    }
+
+    const u = obtenerUbicacionNormal(v.posicion);
+
+    return u
+        ? `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${u.posicion}`
+        : `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${v.posicion || "—"}`;
+}
+
 function actualizarPantalla() {
 
     const playa = playaSelect.value;
@@ -126,70 +148,16 @@ function mostrarVehiculos() {
 
         div.className = "vehicle";
 
-        let etiquetaUbicacion = "";
-
-        if (esPlayaEspecial(v.playa)) {
-
-            const p = parsearPosicionEspecial(
-                v.posicion
-            );
-
-            if (p) {
-
-                etiquetaUbicacion = `
-                    <div class="vehicle-info">
-                        Playa ${escapeHTML(v.playa)}
-                        -
-                        Bloque ${escapeHTML(v.bloque)}
-                        -
-                        Carril ${escapeHTML(p.calle)}
-                        -
-                        Posicion ${escapeHTML(p.fila)}
-                    </div>
-                `;
-
-            } else {
-
-                etiquetaUbicacion = `
-                    <div class="vehicle-info">
-                        Playa ${escapeHTML(v.playa)}
-                        -
-                        Bloque ${escapeHTML(v.bloque)}
-                    </div>
-                `;
-
-            }
-
-        } else {
-
-            const ubicacion =
-                obtenerUbicacionNormal(v.posicion);
-
-            if (ubicacion) {
-
-                etiquetaUbicacion = `
-                    <div class="vehicle-info">
-                        Playa ${escapeHTML(v.playa)}
-                        -
-                        Bloque ${escapeHTML(v.bloque)}
-                        -
-                        ${escapeHTML(ubicacion.posicion)}
-                    </div>
-                `;
-
-            } else {
-
-                etiquetaUbicacion = `
-                    <div class="vehicle-info">
-                        Playa ${escapeHTML(v.playa)}
-                        -
-                        Bloque ${escapeHTML(v.bloque)}
-                    </div>
-                `;
-
-            }
-
-        }
+        const etiquetaUbicacion = `
+            <div class="vehicle-info">
+                ${escapeHTML(ubicacionTexto(v))}
+            </div>
+            ${v.observaciones ? `
+                <div class="vehicle-observation">
+                    <strong>Observación:</strong> ${escapeHTML(v.observaciones)}
+                </div>
+            ` : ""}
+        `;
 
         div.innerHTML = `
 

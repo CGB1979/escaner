@@ -6,7 +6,6 @@
 <title>Rebotador</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#5f9a3d">
-<link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
 <div id="app-shell">
@@ -191,26 +190,103 @@
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://unpkg.com/html5-qrcode"></script>
-<script src="js/modal.js"></script>
-<script src="js/configuracionExcel.js"></script>
-<script src="js/configuracion.js"></script>
-<script src="js/persistencia.js"></script>
-<script src="js/playasEspeciales.js"></script>
-<script src="js/vehiculos.js"></script>
-<script src="js/sonidos.js"></script>
-<script src="js/scanner.js"></script>
-<script src="js/ubicaciones.js"></script>
-<script src="js/exportacion.js"></script>
-<script src="js/version.js"></script>
-<script src="js/app.js"></script>
 <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register(`./service-worker.js?v=${APP_VERSION}`, { scope: "./" });
-  });
-}
+(async function () {
+  "use strict";
+
+  try {
+    const versionUrl = "../js/version.js?check=" + Date.now();
+    const response = await fetch(versionUrl, { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error("No se pudo comprobar la versión.");
+    }
+
+    const source = await response.text();
+    const match = source.match(/APP_VERSION\s*=\s*["']([^"']+)["']/);
+
+    if (!match) {
+      throw new Error("Versión inválida.");
+    }
+
+    const latestVersion = match[1];
+    const versionKey = "control-playa-version";
+    const currentUrl = new URL(window.location.href);
+    const currentVersion = currentUrl.searchParams.get("appv");
+    const storedVersion = localStorage.getItem(versionKey);
+
+    if (storedVersion !== latestVersion || currentVersion !== latestVersion) {
+      if ("caches" in window) {
+        try {
+          const cacheNames = await caches.keys();
+          await Promise.all(
+            cacheNames
+              .filter(name => name.startsWith("control-playa-"))
+              .map(name => caches.delete(name))
+          );
+        } catch (_) {}
+      }
+
+      localStorage.setItem(versionKey, latestVersion);
+      currentUrl.searchParams.set("appv", latestVersion);
+      currentUrl.searchParams.set("_", Date.now().toString());
+
+      window.location.replace(currentUrl.toString());
+      return;
+    }
+
+    const loadScript = (src, attrs = {}) => new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      Object.entries(attrs).forEach(([key, value]) => script.setAttribute(key, value));
+      script.src = src;
+      script.onload = resolve;
+      script.onerror = () => reject(new Error("No se pudo cargar " + src));
+      document.body.appendChild(script);
+    });
+
+    const loadCss = (href) => {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = href;
+      document.head.appendChild(link);
+    };
+
+    loadCss("css/estilos.css?v=" + encodeURIComponent(latestVersion));
+
+    await loadScript("https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js");
+    await loadScript("https://unpkg.com/html5-qrcode");
+
+    const localScripts = [
+      "js/modal.js",
+      "js/configuracionExcel.js",
+      "js/configuracion.js",
+      "js/persistencia.js",
+      "js/playasEspeciales.js",
+      "js/vehiculos.js",
+      "js/sonidos.js",
+      "js/scanner.js",
+      "js/ubicaciones.js",
+      "js/exportacion.js"
+    ];
+
+    for (const src of localScripts) {
+      await loadScript(src + "?v=" + encodeURIComponent(latestVersion));
+    }
+
+    await loadScript("../js/version.js?v=" + encodeURIComponent(latestVersion));
+    await loadScript("js/app.js?v=" + encodeURIComponent(latestVersion));
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register(
+        "../service-worker.js?v=" + encodeURIComponent(latestVersion),
+        { scope: "../" }
+      ).catch(error => console.warn("No se pudo registrar el service worker.", error));
+    }
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "No se pudo cargar Rebotador.");
+  }
+})();
 </script>
 </body>
 </html>
