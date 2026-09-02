@@ -13,9 +13,6 @@ function etiquetaPosicion(playa) {
 }
 
 function ubicacionTexto(v) {
-  if (v && v.ubicacion) {
-    return String(v.ubicacion);
-  }
 
   if (esPlayaEspecial(v.playa)) {
     const p = parsearPosicionEspecial(v.posicion);
@@ -27,10 +24,10 @@ function ubicacionTexto(v) {
     return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${v.posicion || "—"}`;
   }
 
-  // Mantener en la tarjeta el mismo formato de ubicación que utiliza
-  // el escáner normal para playas comunes.
+  // Mantener en la tarjeta el mismo formato de ubicación
+  // que utiliza el escáner normal para playas comunes.
   if (v.playa || v.bloque || v.posicion) {
-    return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${v.posicion || "—"}`;
+    return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Ubicacion ${v.posicion || "—"}`;
   }
 
   return "Sin ubicación";
