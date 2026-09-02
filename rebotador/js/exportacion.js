@@ -146,13 +146,16 @@ function exportarCSV() {
     `A1:${colLetra(maxCol)}${maxFila}`;
 
   const nombreBase = (datosExcel.nombre || "rebotador")
-    .replace(/\.[^.]+$/, "");
+  .replace(/\.[^.]+$/, "");
 
-  XLSX.writeFile(
-    datosExcel.workbook,
-    `${nombreBase}-rebotador.xlsx`
-  );
-}
+const fecha = new Date()
+  .toLocaleDateString("es-AR")
+  .replace(/\//g, "-");
+
+XLSX.writeFile(
+  datosExcel.workbook,
+  `${nombreBase}-rebotador-${fecha}.xlsx`
+)
 
 function cerrarConfirmacion() {
   document.getElementById("confirmModal").classList.add("hidden");
