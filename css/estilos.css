@@ -1040,3 +1040,40 @@ button:disabled {
 
 /* Modal reutilizable para reemplazar cuadros nativos del navegador */
 .modal-buttons.app-dialog-one-button { grid-template-columns: 1fr; }
+
+/* Botones de resultado del escaneo: todos en una sola fila. */
+.scan-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.scan-buttons button {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    padding: 10px 6px;
+    font-size: clamp(11px, 2.5vw, 14px);
+    line-height: 1.15;
+    white-space: normal;
+}
+
+/* Las observaciones usan el color de advertencia/naranja. */
+.scan-buttons .btn-warning,
+.modal-buttons .btn-warning {
+    background: #e09a25;
+}
+
+/* En móviles, los tres botones del cambio de ubicación siguen en la misma fila. */
+#locationModal .modal-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+#locationModal .modal-buttons button {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 10px 6px;
+    font-size: clamp(11px, 3vw, 14px);
+    line-height: 1.15;
+    white-space: normal;
+}

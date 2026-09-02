@@ -1113,3 +1113,34 @@ button:disabled {
         max-width: none;
     }
 }
+
+/* Botones de resultado del escaneo: todos en una sola fila, también en móvil. */
+.scan-buttons {
+    display: flex !important;
+    gap: 8px;
+}
+
+.scan-buttons button {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto !important;
+    padding: 10px 5px;
+    font-size: clamp(10px, 2.8vw, 14px);
+    line-height: 1.15;
+    white-space: normal;
+}
+
+/* Los tres botones de Cambiar ubicación permanecen en una sola fila. */
+#locationModal .modal-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+#locationModal .modal-buttons button {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 10px 5px;
+    font-size: clamp(10px, 3vw, 14px);
+    line-height: 1.15;
+    white-space: normal;
+}

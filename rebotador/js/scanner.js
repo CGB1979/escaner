@@ -92,7 +92,7 @@ function mostrarVehiculo(v) {
 
   document.getElementById("scanButtons").innerHTML = `
     <button class="btn-secondary" type="button" onclick="cancelarResultadoScan()">Cancelar</button>
-    <button class="btn-primary" type="button" onclick="abrirObservacionesResultadoScan()">Observaciones</button>
+    <button class="btn-warning" type="button" onclick="abrirObservacionesResultadoScan()">Observaciones</button>
     <button class="btn-danger" type="button" onclick="borrarDesdeScan()">Borrar</button>
     <button class="btn-warning" type="button" onclick="cambiarDesdeScan()">Cambiar ubicación</button>
   `;
@@ -130,7 +130,7 @@ function mostrarNoEncontrado(codigo) {
 
   document.getElementById("scanButtons").innerHTML = `
     <button class="btn-secondary" type="button" onclick="cerrarScanner()">Salir</button>
-    <button class="btn-primary" type="button" onclick="abrirObservacionesResultadoScan()">Observaciones</button>
+    <button class="btn-warning" type="button" onclick="abrirObservacionesResultadoScan()">Observaciones</button>
     <button class="btn-warning" type="button" onclick="cambiarDesdeScan()">Cambiar ubicación</button>
   `;
 
