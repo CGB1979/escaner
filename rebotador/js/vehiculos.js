@@ -13,18 +13,14 @@ function etiquetaPosicion(playa) {
 }
 
 function ubicacionTexto(v) {
-  if (v && v.ubicacion) {
-    return String(v.ubicacion);
-  }
-
-  if (esPlayaEspecial(v.playa)) {
+    if (esPlayaEspecial(v.playa)) {
     const p = parsearPosicionEspecial(v.posicion);
 
     if (p) {
       return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Carril ${p.calle} - Posicion ${p.fila}`;
     }
 
-    return `${v.ubicacion}`;
+    return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${v.posicion || "—"}`;
   }
 
   // Mantener en la tarjeta el mismo formato de ubicación que utiliza
