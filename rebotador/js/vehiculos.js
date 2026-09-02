@@ -41,12 +41,12 @@ function ubicacionTexto(v) {
     return "Sin ubicación";
 }
 function actualizarPantalla() {
-  const p = playaSelect.value;
-  const b = bloqueSelect.value;
+  const p = normalizar(playaSelect.value);
+  const b = normalizar(bloqueSelect.value);
 
   const resultado = vehiculos.filter(v =>
-    (!p || v.playa === p) &&
-    (!b || v.bloque === b)
+    (!p || key(v.playa) === key(p)) &&
+    (!b || key(v.bloque) === key(b))
   );
 
   document.getElementById("listaTitulo").textContent =
