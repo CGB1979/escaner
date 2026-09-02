@@ -24,7 +24,7 @@ function ubicacionTexto(v) {
       return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Carril ${p.calle} - Posicion ${p.fila}`;
     }
 
-    return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Carril ${p.calle} - Posicion ${p.fila}`;
+    return v.ubicacion;
   }
 
   // Mantener en la tarjeta el mismo formato de ubicación que utiliza
