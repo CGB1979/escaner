@@ -1,1 +1,1 @@
-const APP_VERSION = "1.0.14.k";
+window.APP_VERSION = "1.0.14.l";
