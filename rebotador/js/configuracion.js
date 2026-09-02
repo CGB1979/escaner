@@ -527,7 +527,5 @@ function actualizarSelectores() {
   bloqueSelect.value = bloques.includes(bloqueAnterior) ? bloqueAnterior : "";
 }
 
-playaSelect.addEventListener("change", actualizarPantalla);
-bloqueSelect.addEventListener("change", actualizarPantalla);
 
 window.addEventListener("resize", ajustarBotonesExcel);
