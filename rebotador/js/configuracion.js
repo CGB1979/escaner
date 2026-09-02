@@ -169,19 +169,36 @@ async function cargarExcel() {
       const ws = wb.Sheets[nombreHoja];
       const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
 
-      const filaDatosInicio = Math.max(
-        1,
-        Number(CONFIG_EXCEL.filaInicial) || 2
-      );
+      // La estructura del Excel no tiene que coincidir con la del Excel
+      // generado por el Escáner normal. Buscamos la fila de encabezados
+      // automáticamente en las primeras filas de la hoja. La única columna
+      // imprescindible es Chasis.
+      const limiteBusquedaEncabezados = Math.min(rows.length, 30);
+      let filaEncabezados = -1;
+      let headers = [];
+      let cols = {};
 
-      const filaEncabezados = filaDatosInicio - 1;
-      const headers = rows[filaEncabezados - 1] || [];
-      const cols = detectarColumnas(headers);
+      for (let i = 0; i < limiteBusquedaEncabezados; i++) {
+        const candidatos = rows[i] || [];
+        const detectadas = detectarColumnas(candidatos);
 
-      if (!Number.isInteger(cols.chasis) || cols.chasis < 0) {
-        alert("No se encontró la columna Chasis. Revise js/configuracionExcel.js");
+        if (Number.isInteger(detectadas.chasis) && detectadas.chasis >= 0) {
+          filaEncabezados = i;
+          headers = candidatos;
+          cols = detectadas;
+          break;
+        }
+      }
+
+      if (filaEncabezados < 0) {
+        alert("No se encontró una columna Chasis en el archivo Excel.");
         return;
       }
+
+      // Los datos comienzan inmediatamente después de la fila de encabezados.
+      // Así funcionan tanto los archivos simples como los que tienen títulos
+      // o filas informativas antes de la cabecera.
+      const filaDatosInicio = filaEncabezados + 2;
 
       vehiculos = rows
         .slice(filaDatosInicio - 1)

@@ -4,7 +4,8 @@
 */
 const CONFIG_EXCEL = {
   hoja: 0,
-  filaInicial: 2,
+  // La fila de encabezados se detecta automáticamente buscando Chasis.
+  filaInicial: null,
   campos: {
     chasis: { columna: null, encabezados: ["chasis", "numero de chasis", "n° chasis", "vin"] },
     playa: { columna: null, encabezados: ["playa"] },
