@@ -13,25 +13,33 @@ function etiquetaPosicion(playa) {
 }
 
 function ubicacionTexto(v) {
+    // Para playas especiales, priorizar los campos carril / posicion cuando estén presentes
     if (esPlayaEspecial(v.playa)) {
-    const p = parsearPosicionEspecial(v.posicion);
+      // Si ya vienen separados, úsalos directamente
+      if (v.carril || v.posicion) {
+        const carril = v.carril ?? (parsearPosicionEspecial(v.posicion)?.calle ?? "—");
+        const posicion = v.posicion ?? (parsearPosicionEspecial(v.posicion)?.fila ?? "—");
+        return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Carril ${carril} - Posicion ${posicion}`;
+      }
 
-    if (p) {
-      return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Carril ${p.calle} - Posicion ${p.fila}`;
+      // Si no vienen separados, intentar parsear el campo posicion
+      const p = parsearPosicionEspecial(v.posicion);
+
+      if (p) {
+        return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Carril ${p.calle} - Posicion ${p.fila}`;
+      }
+
+      // Fallback: mostrar lo que haya en v.posicion
+      return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${v.posicion || "—"}`;
     }
 
-    return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${v.posicion || "—"}`;
-  }
+    // Playas normales: mantener formato anterior
+    if (v.playa || v.bloque || v.posicion) {
+      return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Ubicacion ${v.posicion || "—"}`;
+    }
 
-  // Mantener en la tarjeta el mismo formato de ubicación que utiliza
-  // el escáner normal para playas comunes.
-  if (v.playa || v.bloque || v.posicion) {
-    return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Ubicacion ${v.posicion || "—"}`;
-  }
-
-  return "Sin ubicación";
+    return "Sin ubicación";
 }
-
 function actualizarPantalla() {
   const p = playaSelect.value;
   const b = bloqueSelect.value;
