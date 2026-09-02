@@ -1,4 +1,4 @@
-function confirmarBorrarTodo() {
+async function confirmarBorrarTodo() {
   if (!datosExcel.workbook) return;
 
   const borrarTodo = confirm(
@@ -14,7 +14,7 @@ function confirmarBorrarTodo() {
     excelFileInput.value = "";
     btnBuscarExcel.textContent = "Buscar Excel";
     btnCargarExcel.disabled = true;
-    if (typeof eliminarSesionGuardada === "function") eliminarSesionGuardada();
+    if (typeof eliminarSesionGuardada === "function") await eliminarSesionGuardada();
     actualizarPantalla();
     actualizarEstadoExcel();
     return;

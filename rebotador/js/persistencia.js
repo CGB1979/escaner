@@ -1,7 +1,7 @@
 /* Persistencia local de la sesión mediante IndexedDB.
    Guarda una instantánea del libro Excel y el estado actual de los vehículos. */
 const PERSISTENCIA_DB = "rebotador-db";
-const PERSISTENCIA_VERSION = 1;
+const PERSISTENCIA_VERSION = 2;
 const PERSISTENCIA_STORE = "sesion";
 const PERSISTENCIA_KEY = "ultima-sesion";
 let guardadoPendiente = false;
@@ -24,7 +24,10 @@ async function guardarSesionAhora() {
   if (restaurandoSesion || !datosExcel.workbook || !datosExcel.worksheet) return;
 
   try {
-    const excel = XLSX.write(datosExcel.workbook, { bookType: "xlsx", type: "array" });
+    const excelData = XLSX.write(datosExcel.workbook, { bookType: "xlsx", type: "array" });
+    const excel = excelData instanceof ArrayBuffer
+      ? excelData
+      : excelData.buffer.slice(excelData.byteOffset, excelData.byteOffset + excelData.byteLength);
     const db = await abrirDBRebotador();
     const tx = db.transaction(PERSISTENCIA_STORE, "readwrite");
     tx.objectStore(PERSISTENCIA_STORE).put({
@@ -59,6 +62,14 @@ function programarGuardadoSesion() {
     await guardarSesionAhora();
   }, 150);
 }
+
+window.addEventListener("pagehide", () => {
+  // Los cambios normales ya se guardan en cada operación. Este guardado
+  // adicional cubre una recarga/cierre inmediatamente posterior a un cambio.
+  if (!restaurandoSesion && datosExcel.workbook && datosExcel.worksheet) {
+    guardarSesionAhora();
+  }
+});
 
 async function leerSesionGuardada() {
   try {

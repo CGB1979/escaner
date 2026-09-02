@@ -41,11 +41,9 @@ const APP_ASSETS = [
   './rebotador/js/sonidos.js',
   './rebotador/js/ubicaciones.js',
   './rebotador/js/vehiculos.js',
-  './rebotador/js/version.js',
 
   './rebotador/img/icon-192.png',
   './rebotador/img/icon-512.png',
-  './rebotador/manifest.json'
 ];
 
 self.addEventListener('install', event => {

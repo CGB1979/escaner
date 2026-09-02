@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Rebotador</title>
-<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#5f9a3d">
 </head>
 <body>
@@ -275,13 +274,6 @@
 
     await loadScript("../js/version.js?v=" + encodeURIComponent(latestVersion));
     await loadScript("js/app.js?v=" + encodeURIComponent(latestVersion));
-
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register(
-        "../service-worker.js?v=" + encodeURIComponent(latestVersion),
-        { scope: "../" }
-      ).catch(error => console.warn("No se pudo registrar el service worker.", error));
-    }
   } catch (err) {
     console.error(err);
     alert(err.message || "No se pudo cargar Rebotador.");

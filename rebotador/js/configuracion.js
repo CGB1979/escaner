@@ -64,11 +64,25 @@ function detectarColumnas(encabezados) {
 
   for (const [campo, cfg] of Object.entries(CONFIG_EXCEL.campos)) {
     let idx = columnaPorLetra(cfg.columna);
+    const alternativas = (cfg.encabezados || []).map(key);
 
     if (idx === null) {
-      idx = encabezados.findIndex(h =>
-        cfg.encabezados.map(key).includes(key(h))
-      );
+      idx = encabezados.findIndex(h => alternativas.includes(key(h)));
+    }
+
+    // Para Chasis aceptamos cualquier encabezado que contenga la palabra
+    // "chasis" (por ejemplo: "Numero de chasis", "N° de chasis", etc.).
+    if (idx < 0 && campo === "chasis") {
+      idx = encabezados.findIndex(h => key(h).includes("chasis"));
+    }
+
+    // El resto de las columnas son opcionales. Ademas de las alternativas
+    // configuradas, permitimos encabezados que contengan el termino.
+    if (idx < 0 && campo !== "chasis") {
+      idx = encabezados.findIndex(h => {
+        const kh = key(h);
+        return alternativas.some(a => a && kh.includes(a));
+      });
     }
 
     r[campo] = idx;
@@ -138,7 +152,7 @@ function actualizarEstadoExcel() {
   if (typeof programarGuardadoSesion === "function") programarGuardadoSesion();
 }
 
-function cargarExcel() {
+async function cargarExcel() {
   const f = excelFileInput.files[0];
 
   if (!f) {
@@ -148,7 +162,7 @@ function cargarExcel() {
 
   const reader = new FileReader();
 
-  reader.onload = e => {
+  reader.onload = async e => {
     try {
       const wb = XLSX.read(e.target.result, { type: "array" });
       const nombreHoja = wb.SheetNames[CONFIG_EXCEL.hoja] || wb.SheetNames[0];
@@ -164,7 +178,7 @@ function cargarExcel() {
       const headers = rows[filaEncabezados - 1] || [];
       const cols = detectarColumnas(headers);
 
-      if (cols.chasis < 0 || cols.chasis === undefined) {
+      if (!Number.isInteger(cols.chasis) || cols.chasis < 0) {
         alert("No se encontró la columna Chasis. Revise js/configuracionExcel.js");
         return;
       }
@@ -205,7 +219,9 @@ function cargarExcel() {
       actualizarSelectores();
       actualizarPantalla();
       actualizarEstadoExcel();
-      if (typeof guardarSesionAhora === "function") guardarSesionAhora();
+      if (typeof guardarSesionAhora === "function") {
+        await guardarSesionAhora();
+      }
 
     } catch (err) {
       console.error(err);
