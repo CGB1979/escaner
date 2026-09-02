@@ -156,7 +156,7 @@ XLSX.writeFile(
   datosExcel.workbook,
   `${nombreBase}-rebotador-${fecha}.xlsx`
 )
-}
+
 function cerrarConfirmacion() {
   document.getElementById("confirmModal").classList.add("hidden");
 }
