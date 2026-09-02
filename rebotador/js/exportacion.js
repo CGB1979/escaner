@@ -1,8 +1,10 @@
 async function confirmarBorrarTodo() {
   if (!datosExcel.workbook) return;
 
-  const borrarTodo = confirm(
-    "¿Eliminar el Excel guardado y todos los datos de la sesión?\n\nAceptar = eliminar Excel y todos los datos.\nCancelar = ver la siguiente opción."
+  const borrarTodo = await mostrarConfirm(
+    "¿Eliminar el Excel guardado y todos los datos de la sesión?\n\nAceptar = eliminar Excel y todos los datos.\nCancelar = ver la siguiente opción.",
+    "Borrar todo",
+    "Eliminar"
   );
 
   if (borrarTodo) {
@@ -21,7 +23,7 @@ async function confirmarBorrarTodo() {
   }
 
   if (!vehiculos.length) return;
-  if (confirm("¿Reiniciar solo las asignaciones y movimientos? El Excel seguirá cargado y la sesión se conservará.")) {
+  if (await mostrarConfirm("¿Reiniciar solo las asignaciones y movimientos? El Excel seguirá cargado y la sesión se conservará.", "Reiniciar asignaciones", "Reiniciar")) {
     vehiculos.forEach(v => {
       v.playa = "";
       v.bloque = "";
@@ -82,7 +84,7 @@ function limpiarFila(fila, maxCol) {
 
 function exportarCSV() {
   if (!datosExcel.workbook || !datosExcel.worksheet) {
-    alert("No hay un archivo Excel cargado para exportar.");
+    mostrarAlerta("No hay un archivo Excel cargado para exportar.");
     return;
   }
 

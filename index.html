@@ -258,6 +258,7 @@
   </div>
 </div>
 
+<script src="js/modal.js"></script>
 <script>
 (async function () {
   "use strict";
@@ -328,7 +329,6 @@
 
     const localScripts = [
       "js/configuracion.js",
-      "js/modal.js",
       "js/playasEspeciales.js",
       "js/numeracion.js",
       "js/vehiculos.js",
@@ -354,7 +354,7 @@
     console.error(err);
     const badge = document.getElementById("versionBadge");
     if (badge) badge.textContent = "Error de actualización";
-    alert(err.message || "No se pudo cargar Control de Playa.");
+    mostrarAlerta(err.message || "No se pudo cargar Control de Playa.", "Error");
   }
 })();
 </script>

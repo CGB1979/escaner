@@ -1,6 +1,6 @@
 async function abrirScanner() {
   if (!datosExcel.workbook) {
-    alert("Primero cargue un archivo Excel.");
+    await mostrarAlerta("Primero cargue un archivo Excel.");
     return;
   }
 
@@ -226,7 +226,7 @@ function confirmarIngresoManual() {
 
   if (c.length < 4) {
     sonidoError();
-    alert("Ingrese al menos 4 caracteres.");
+    mostrarAlerta("Ingrese al menos 4 caracteres.");
     return;
   }
 

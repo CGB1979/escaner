@@ -191,6 +191,7 @@
   </div>
 </div>
 
+<script src="js/modal.js"></script>
 <script>
 (async function () {
   "use strict";
@@ -249,7 +250,6 @@
     await loadScript("https://unpkg.com/html5-qrcode");
 
     const localScripts = [
-      "js/modal.js",
       "js/configuracionExcel.js",
       "js/configuracion.js",
       "js/persistencia.js",
@@ -270,7 +270,7 @@
     await loadScript("js/app.js?v=" + encodeURIComponent(latestVersion));
   } catch (err) {
     console.error(err);
-    alert(err.message || "No se pudo cargar Rebotador.");
+    mostrarAlerta(err.message || "No se pudo cargar Rebotador.", "Error");
   }
 })();
 </script>

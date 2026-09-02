@@ -83,12 +83,12 @@ function actualizarPantalla() {
   `).join("");
 }
 
-function eliminarVehiculo(id, sinConfirmar = false) {
+async function eliminarVehiculo(id, sinConfirmar = false) {
   const v = vehiculos.find(x => x.id === id);
   if (!v) return false;
 
   if (!sinConfirmar) {
-    if (!confirm(`¿Borrar el vehículo ${v.chasis} del listado cargado?`)) {
+    if (!(await mostrarConfirm(`¿Borrar el vehículo ${v.chasis} del listado cargado?`, "Eliminar vehículo", "Eliminar"))) {
       return false;
     }
   }

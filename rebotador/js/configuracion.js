@@ -80,7 +80,7 @@ async function copiarLogExcelDebug(mostrarMensaje = true) {
   }
 
   if (mostrarMensaje) {
-    alert(copiado
+    mostrarAlerta(copiado
       ? "El diagnóstico se copió al portapapeles. Pegalo en el chat."
       : "No se pudo copiar automáticamente. Usá el botón 'Copiar diagnóstico'.");
   }
@@ -335,7 +335,7 @@ async function cargarExcel() {
 
   if (!f) {
     logExcelDebug("No hay archivo seleccionado al presionar Cargar");
-    alert("Seleccione un archivo Excel.");
+    await mostrarAlerta("Seleccione un archivo Excel.");
     return;
   }
 
@@ -356,7 +356,7 @@ async function cargarExcel() {
     const err = reader.error || new Error("FileReader.error sin detalle");
     registrarErrorExcelDebug("FileReader", err);
     copiarLogExcelDebug(true);
-    alert("No se pudo leer el archivo desde el navegador. El diagnóstico fue copiado al portapapeles.");
+    mostrarAlerta("No se pudo leer el archivo desde el navegador. El diagnóstico fue copiado al portapapeles.");
   };
   reader.onabort = () => {
     logExcelDebug("FileReader: onabort");
@@ -396,7 +396,7 @@ async function cargarExcel() {
       if (!encontrada) {
         logExcelDebug("No se encontró ninguna cabecera con CHASIS");
         await copiarLogExcelDebug(false);
-        alert("No se encontró una columna Chasis en el archivo Excel. El diagnóstico fue copiado al portapapeles.");
+        await mostrarAlerta("No se encontró una columna Chasis en el archivo Excel. El diagnóstico fue copiado al portapapeles.");
         return;
       }
 
@@ -447,7 +447,7 @@ async function cargarExcel() {
       if (!vehiculos.length) {
         logExcelDebug("ERROR: se encontró cabecera CHASIS pero no hay valores de chasis debajo de ella");
         await copiarLogExcelDebug(false);
-        alert("Se encontró la cabecera Chasis, pero no se encontraron vehículos debajo. El diagnóstico fue copiado al portapapeles.");
+        await mostrarAlerta("Se encontró la cabecera Chasis, pero no se encontraron vehículos debajo. El diagnóstico fue copiado al portapapeles.");
         return;
       }
 
@@ -489,7 +489,7 @@ async function cargarExcel() {
     } catch (err) {
       registrarErrorExcelDebug("Procesamiento XLSX/importación", err);
       await copiarLogExcelDebug(false);
-      alert("No se pudo leer el archivo Excel. El diagnóstico fue copiado al portapapeles. Pegalo en el chat.");
+      await mostrarAlerta("No se pudo leer el archivo Excel. El diagnóstico fue copiado al portapapeles. Pegalo en el chat.");
     }
   };
 
@@ -499,7 +499,7 @@ async function cargarExcel() {
   } catch (err) {
     registrarErrorExcelDebug("reader.readAsArrayBuffer", err);
     await copiarLogExcelDebug(false);
-    alert("No se pudo iniciar la lectura del archivo. El diagnóstico fue copiado al portapapeles.");
+    await mostrarAlerta("No se pudo iniciar la lectura del archivo. El diagnóstico fue copiado al portapapeles.");
   }
 }
 

@@ -65,8 +65,8 @@
             el.title.textContent = opciones.title || "Atención";
             el.message.textContent = opciones.message || "";
             el.inputGroup.classList.toggle("hidden", opciones.type !== "prompt");
-            el.cancel.classList.toggle("hidden", opciones.type !== "prompt");
-            el.accept.parentElement.classList.toggle("app-dialog-one-button", opciones.type !== "prompt");
+            el.cancel.classList.toggle("hidden", opciones.type === "alert");
+            el.accept.parentElement.classList.toggle("app-dialog-one-button", opciones.type === "alert");
             el.accept.textContent = opciones.acceptText || (opciones.type === "prompt" ? "Continuar" : "Aceptar");
             el.input.value = opciones.defaultValue || "";
 
@@ -116,6 +116,15 @@
             if (typeof guardarDatos === "function") guardarDatos();
             if (typeof actualizarPantalla === "function") actualizarPantalla();
             if (typeof actualizarEstadoExcel === "function") actualizarEstadoExcel();
+        });
+    };
+
+    window.mostrarConfirm = function (mensaje, titulo, textoAceptar) {
+        return abrirDialogo({
+            type: "confirm",
+            title: titulo || "Confirmar",
+            message: mensaje,
+            acceptText: textoAceptar || "Confirmar"
         });
     };
 
