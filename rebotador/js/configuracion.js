@@ -103,61 +103,43 @@ function pareceChasis(v) {
 }
 
 function detectarEstructuraExcel(rows) {
-  const limite = Math.min(rows.length, 100);
-
-  // 1) Caso normal: existe una fila de encabezados que contiene Chasis.
-  for (let i = 0; i < limite; i++) {
+  // La única condición obligatoria es que exista una fila de cabeceras
+  // con alguna celda cuyo texto contenga la palabra "chasis".
+  // No importa en qué fila esté ni cuántas columnas tenga la cabecera.
+  for (let i = 0; i < rows.length; i++) {
     const candidatos = rows[i] || [];
     const detectadas = detectarColumnas(candidatos);
 
     if (Number.isInteger(detectadas.chasis) && detectadas.chasis >= 0) {
       return {
         filaEncabezados: i,
-        headers: candidatos,
+        headers: candidatos.slice(),
         cols: detectadas
       };
     }
   }
 
-  // 2) Fallback: algunos archivos no traen encabezados reconocibles.
-  // Buscamos una columna que contenga varios valores con aspecto de chasis.
-  // Esto permite importar igualmente mientras exista información de chasis.
-  const maxColumnas = rows.reduce((m, row) => Math.max(m, (row || []).length), 0);
-  let mejorColumna = -1;
-  let mejorPuntaje = 0;
-  let mejorFila = -1;
+  return null;
+}
 
-  for (let col = 0; col < maxColumnas; col++) {
-    let puntaje = 0;
-    let primeraFila = -1;
+function buscarEstructuraEnWorkbook(wb) {
+  // Recorremos todas las hojas. No asumimos que la hoja con los vehículos
+  // sea la primera ni que se llame "Planilla" o "Vehiculos".
+  for (const nombreHoja of wb.SheetNames) {
+    const ws = wb.Sheets[nombreHoja];
+    if (!ws) continue;
 
-    for (let i = 0; i < limite; i++) {
-      const valor = rows[i] && rows[i][col];
-      if (pareceChasis(valor)) {
-        puntaje++;
-        if (primeraFila < 0) primeraFila = i;
-      }
+    const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+    const estructura = detectarEstructuraExcel(rows);
+
+    if (estructura) {
+      return {
+        nombreHoja,
+        ws,
+        rows,
+        estructura
+      };
     }
-
-    if (puntaje > mejorPuntaje) {
-      mejorPuntaje = puntaje;
-      mejorColumna = col;
-      mejorFila = primeraFila;
-    }
-  }
-
-  // Para evitar interpretar una columna cualquiera como chasis, exigimos
-  // al menos dos valores candidatos cuando no hay encabezado.
-  if (mejorColumna >= 0 && mejorPuntaje >= 2) {
-    const filaEncabezados = Math.max(0, mejorFila - 1);
-    const headers = (rows[filaEncabezados] || []).slice();
-    if (!headers[mejorColumna]) headers[mejorColumna] = "Chasis";
-
-    return {
-      filaEncabezados,
-      headers,
-      cols: { chasis: mejorColumna, playa: -1, bloque: -1, carril: -1, posicion: -1, observaciones: -1, movidoDesde: -1 }
-    };
   }
 
   return null;
@@ -237,21 +219,17 @@ async function cargarExcel() {
   reader.onload = async e => {
     try {
       const wb = XLSX.read(e.target.result, { type: "array" });
-      const nombreHoja = wb.SheetNames[CONFIG_EXCEL.hoja] || wb.SheetNames[0];
-      const ws = wb.Sheets[nombreHoja];
-      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+      const encontrada = buscarEstructuraEnWorkbook(wb);
 
-      // La estructura del Excel no tiene que coincidir con la del Excel
-      // generado por el Escáner normal. Buscamos la fila de encabezados
-      // automáticamente en las primeras filas de la hoja. La única columna
-      // imprescindible es Chasis.
-      const estructura = detectarEstructuraExcel(rows);
-
-      if (!estructura) {
+      if (!encontrada) {
         alert("No se encontró una columna Chasis en el archivo Excel. El archivo debe contener al menos una columna con un encabezado que incluya la palabra Chasis.");
         return;
       }
 
+      const nombreHoja = encontrada.nombreHoja;
+      const ws = encontrada.ws;
+      const rows = encontrada.rows;
+      const estructura = encontrada.estructura;
       const filaEncabezados = estructura.filaEncabezados;
       const headers = estructura.headers;
       const cols = estructura.cols;
