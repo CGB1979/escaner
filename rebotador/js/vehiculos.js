@@ -86,7 +86,8 @@ function actualizarPantalla() {
     </div>
   `).join("");
 }
-
+playaSelect.addEventListener("change", actualizarPantalla);
+bloqueSelect.addEventListener("change", actualizarPantalla);
 async function eliminarVehiculo(id, sinConfirmar = false) {
   const v = vehiculos.find(x => x.id === id);
   if (!v) return false;
