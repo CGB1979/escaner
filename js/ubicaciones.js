@@ -426,7 +426,7 @@ function actualizarPreviewCambioUbicacion() {
     document
         .getElementById("locationPreview")
         .innerText =
-        `Nueva ubicacion: \nPlaya ${playa} - Bloque ${bloque} - Ubicacion ${numero}`;
+        `Nueva ubicacion: \nPlaya ${playa} - Bloque ${bloque} - Numero ${numero}`;
 
     const ocupado =
         vehiculos.some(function(v) {

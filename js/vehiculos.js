@@ -15,9 +15,9 @@ function ubicacionTexto(v) {
 
     const u = obtenerUbicacionNormal(v.posicion);
 
-return u
-    ? `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Ubicacion ${u.posicion}`
-    : `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Ubicacion ${v.posicion || "—"}`;
+    return u
+        ? `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${u.posicion}`
+        : `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${v.posicion || "—"}`;
 }
 
 function actualizarPantalla() {

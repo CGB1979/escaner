@@ -26,7 +26,11 @@ async function abrirScanner() {
       { facingMode: "environment" },
       {
         fps: 10,
-        qrbox: { width: 280, height: 130 },
+        qrbox: function(viewfinderWidth, viewfinderHeight) {
+          const width = Math.floor(viewfinderWidth * 0.92);
+          const height = Math.min(140, Math.floor(viewfinderHeight * 0.45));
+          return { width: width, height: height };
+        },
         formatsToSupport: [
           Html5QrcodeSupportedFormats.CODE_128,
           Html5QrcodeSupportedFormats.CODE_39,
