@@ -663,8 +663,12 @@ async function exportarCSV() {
             url;
 
 
-        enlace.download =
-            "vehiculos_playa.xlsx";
+        const fecha = new Date()
+    .toLocaleDateString("es-AR")
+    .replace(/\//g, "-");
+
+enlace.download =
+    `playa-${fecha}.xlsx`;
 
 
         document
