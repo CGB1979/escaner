@@ -27,7 +27,7 @@ const APP_ASSETS = [
   // REBOTADOR
   './rebotador/',
   './rebotador/index.html',
-  './rebotador/css/estilos.css',
+  './css/estilos.rebotador.css',
 
   './rebotador/js/app.js',
   './rebotador/js/configuracion.js',

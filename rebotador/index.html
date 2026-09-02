@@ -143,7 +143,7 @@
     </div>
 
     <div class="row">
-      <div class="form-group">
+      <div id="grupoCambioCarril" class="form-group">
         <label for="cambioCarril">Carril</label>
         <input id="cambioCarril" list="cambioCarrilOpciones" type="number" min="1" step="1" inputmode="numeric" autocomplete="off">
         <datalist id="cambioCarrilOpciones"></datalist>
@@ -151,6 +151,7 @@
       <div class="form-group">
         <label id="labelCambioPosicion" for="cambioPosicion">Ubicación</label>
         <select id="cambioPosicion"></select>
+        <input id="cambioPosicionNormal" type="number" min="1" step="1" inputmode="numeric" autocomplete="off" class="hidden">
       </div>
     </div>
 
@@ -243,15 +244,6 @@
       script.onerror = () => reject(new Error("No se pudo cargar " + src));
       document.body.appendChild(script);
     });
-
-    const loadCss = (href) => {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = href;
-      document.head.appendChild(link);
-    };
-
-    loadCss("css/estilos.css?v=" + encodeURIComponent(latestVersion));
 
     await loadScript("https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js");
     await loadScript("https://unpkg.com/html5-qrcode");

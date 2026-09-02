@@ -507,9 +507,9 @@ function actualizarSelectores() {
   const playaAnterior = playaSelect.value;
   const bloqueAnterior = bloqueSelect.value;
 
-  const playas = PLAYAS_DISPONIBLES.slice();
+  const playas = obtenerPlayasFiltro();
 
-  const bloques = BLOQUES_DISPONIBLES.slice();
+  const bloques = obtenerBloquesFiltro();
 
   playaSelect.innerHTML =
     '<option value="">Todas</option>' +
