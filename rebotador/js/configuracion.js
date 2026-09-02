@@ -61,26 +61,30 @@ function columnaPorLetra(l) {
 
 function detectarColumnas(encabezados) {
   const r = {};
+  const headers = (encabezados || []).map(h => normalizar(h));
 
   for (const [campo, cfg] of Object.entries(CONFIG_EXCEL.campos)) {
     let idx = columnaPorLetra(cfg.columna);
-    const alternativas = (cfg.encabezados || []).map(key);
+    const alternativas = (cfg.encabezados || []).map(key).filter(Boolean);
 
-    if (idx === null) {
-      idx = encabezados.findIndex(h => alternativas.includes(key(h)));
+    // Si se indicó una letra de columna, se respeta como primera opción.
+    if (idx === null || idx >= headers.length) idx = -1;
+
+    if (idx < 0) {
+      // Primero intentamos coincidencia exacta.
+      idx = headers.findIndex(h => alternativas.includes(key(h)));
     }
 
-    // Para Chasis aceptamos cualquier encabezado que contenga la palabra
-    // "chasis" (por ejemplo: "Numero de chasis", "N° de chasis", etc.).
-    if (idx < 0 && campo === "chasis") {
-      idx = encabezados.findIndex(h => key(h).includes("chasis"));
-    }
-
-    // El resto de las columnas son opcionales. Ademas de las alternativas
-    // configuradas, permitimos encabezados que contengan el termino.
-    if (idx < 0 && campo !== "chasis") {
-      idx = encabezados.findIndex(h => {
+    if (idx < 0) {
+      // Después permitimos encabezados más descriptivos.
+      idx = headers.findIndex(h => {
         const kh = key(h);
+        if (!kh) return false;
+
+        if (campo === "chasis") {
+          return kh.includes("chasis");
+        }
+
         return alternativas.some(a => a && kh.includes(a));
       });
     }
@@ -89,6 +93,74 @@ function detectarColumnas(encabezados) {
   }
 
   return r;
+}
+
+function pareceChasis(v) {
+  const s = normalizar(v).replace(/\s+/g, "");
+  // Los chasis/VIN suelen ser cadenas alfanuméricas largas. No exigimos
+  // exactamente 17 caracteres para no descartar archivos particulares.
+  return s.length >= 6 && /[a-z0-9]/i.test(s) && !/^(chasis|numero|nro|n|vin)$/i.test(s);
+}
+
+function detectarEstructuraExcel(rows) {
+  const limite = Math.min(rows.length, 100);
+
+  // 1) Caso normal: existe una fila de encabezados que contiene Chasis.
+  for (let i = 0; i < limite; i++) {
+    const candidatos = rows[i] || [];
+    const detectadas = detectarColumnas(candidatos);
+
+    if (Number.isInteger(detectadas.chasis) && detectadas.chasis >= 0) {
+      return {
+        filaEncabezados: i,
+        headers: candidatos,
+        cols: detectadas
+      };
+    }
+  }
+
+  // 2) Fallback: algunos archivos no traen encabezados reconocibles.
+  // Buscamos una columna que contenga varios valores con aspecto de chasis.
+  // Esto permite importar igualmente mientras exista información de chasis.
+  const maxColumnas = rows.reduce((m, row) => Math.max(m, (row || []).length), 0);
+  let mejorColumna = -1;
+  let mejorPuntaje = 0;
+  let mejorFila = -1;
+
+  for (let col = 0; col < maxColumnas; col++) {
+    let puntaje = 0;
+    let primeraFila = -1;
+
+    for (let i = 0; i < limite; i++) {
+      const valor = rows[i] && rows[i][col];
+      if (pareceChasis(valor)) {
+        puntaje++;
+        if (primeraFila < 0) primeraFila = i;
+      }
+    }
+
+    if (puntaje > mejorPuntaje) {
+      mejorPuntaje = puntaje;
+      mejorColumna = col;
+      mejorFila = primeraFila;
+    }
+  }
+
+  // Para evitar interpretar una columna cualquiera como chasis, exigimos
+  // al menos dos valores candidatos cuando no hay encabezado.
+  if (mejorColumna >= 0 && mejorPuntaje >= 2) {
+    const filaEncabezados = Math.max(0, mejorFila - 1);
+    const headers = (rows[filaEncabezados] || []).slice();
+    if (!headers[mejorColumna]) headers[mejorColumna] = "Chasis";
+
+    return {
+      filaEncabezados,
+      headers,
+      cols: { chasis: mejorColumna, playa: -1, bloque: -1, carril: -1, posicion: -1, observaciones: -1, movidoDesde: -1 }
+    };
+  }
+
+  return null;
 }
 
 function valorFila(row, idx) {
@@ -173,31 +245,16 @@ async function cargarExcel() {
       // generado por el Escáner normal. Buscamos la fila de encabezados
       // automáticamente en las primeras filas de la hoja. La única columna
       // imprescindible es Chasis.
-      const limiteBusquedaEncabezados = Math.min(rows.length, 30);
-      let filaEncabezados = -1;
-      let headers = [];
-      let cols = {};
+      const estructura = detectarEstructuraExcel(rows);
 
-      for (let i = 0; i < limiteBusquedaEncabezados; i++) {
-        const candidatos = rows[i] || [];
-        const detectadas = detectarColumnas(candidatos);
-
-        if (Number.isInteger(detectadas.chasis) && detectadas.chasis >= 0) {
-          filaEncabezados = i;
-          headers = candidatos;
-          cols = detectadas;
-          break;
-        }
-      }
-
-      if (filaEncabezados < 0) {
-        alert("No se encontró una columna Chasis en el archivo Excel.");
+      if (!estructura) {
+        alert("No se encontró una columna Chasis en el archivo Excel. El archivo debe contener al menos una columna con un encabezado que incluya la palabra Chasis.");
         return;
       }
 
-      // Los datos comienzan inmediatamente después de la fila de encabezados.
-      // Así funcionan tanto los archivos simples como los que tienen títulos
-      // o filas informativas antes de la cabecera.
+      const filaEncabezados = estructura.filaEncabezados;
+      const headers = estructura.headers;
+      const cols = estructura.cols;
       const filaDatosInicio = filaEncabezados + 2;
 
       vehiculos = rows
