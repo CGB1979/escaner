@@ -767,8 +767,8 @@ numberingHelp.innerText =
     inversa
         ? inicio === 1
             ? `Se escaneará la fila ${fila} en inversa desde la posición 1.<br>No existen posiciones menores a 1 para asignar.`
-            : `Se escaneará la fila ${fila} en inversa: ${inicio}-${fila}, ${inicio - 1}-${fila}, ${inicio - 2}-${fila}, ${inicio - 3}-${fila}...<br>La asignación continuará hasta llegar a la posición 1.`
-        : `Se escaneará la fila ${fila}: ${inicio}-${fila}, ${inicio + 1}-${fila}, ${inicio + 2}-${fila}, ${inicio + 3}-${fila}...<br>La asignación continuará en orden ascendente.`;
+            : `Se escaneará la fila ${fila} en inversa: ${inicio}-${fila}, ${inicio - 1}-${fila}, ${inicio - 2}-${fila}, ${inicio - 3}-${fila}... La asignación continuará hasta llegar a la posición 1.`
+        : `Se escaneará la fila ${fila}: ${inicio}-${fila}, ${inicio + 1}-${fila}, ${inicio + 2}-${fila}, ${inicio + 3}-${fila}... La asignación continuará en orden ascendente.`;
 
             numberingHelp.classList.add(
                 "editable-j"
