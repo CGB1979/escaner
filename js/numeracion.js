@@ -166,22 +166,29 @@ function organizarControlesInicio() {
         elemento.style.gridRow = "auto";
     });
 
+    // En la vista de tres columnas fijamos los controles visibles en la
+    // primera fila. Esto evita que el auto-placement de CSS envíe "Fila"
+    // a una segunda fila en pantallas angostas cuando hay controles ocultos
+    // entre los elementos del DOM.
+    function colocarEnPrimeraFila(elemento, columna) {
+        if (!elemento || elemento.classList.contains("hidden")) return;
+        elemento.style.gridColumn = String(columna);
+        elemento.style.gridRow = "1";
+    }
+
     if (esJ && modo === "continua" && !manual) {
-        numeroInicialContainer.style.gridColumn = "1";
-        const capacidad = document.getElementById("cochesPorCarrilContainer");
-        if (capacidad) capacidad.style.gridColumn = "2";
-        const manualContainer = document.getElementById("escaneoManualContainer");
-        if (manualContainer) manualContainer.style.gridColumn = "3";
+        colocarEnPrimeraFila(numeroInicialContainer, 1);
+        colocarEnPrimeraFila(document.getElementById("cochesPorCarrilContainer"), 2);
+        colocarEnPrimeraFila(document.getElementById("escaneoManualContainer"), 3);
     } else if (esJ && modo === "porFila" && !manual) {
-        numeroInicialContainer.style.gridColumn = "1";
-        filaInicialContainer.style.gridColumn = "2";
-        const inversa = document.getElementById("inversaContainer");
-        if (inversa) inversa.style.gridColumn = "3";
+        colocarEnPrimeraFila(numeroInicialContainer, 1);
+        colocarEnPrimeraFila(filaInicialContainer, 2);
+        colocarEnPrimeraFila(document.getElementById("inversaContainer"), 3);
     } else if (esJ && modo === "zigzag" && !manual) {
-        numeroInicialContainer.style.gridColumn = "1";
-        const capacidad = document.getElementById("cochesPorCarrilContainer");
-        if (capacidad) capacidad.style.gridColumn = "2";
+        colocarEnPrimeraFila(numeroInicialContainer, 1);
+        colocarEnPrimeraFila(document.getElementById("cochesPorCarrilContainer"), 2);
     } else if (manual) {
+
         const manualContainer = document.getElementById("escaneoManualContainer");
         if (manualContainer) manualContainer.style.gridColumn = "2";
     } else {
