@@ -712,7 +712,7 @@ if (cochesPorCarril) {
 function actualizarAyudaNumeracion() {
 
     if (typeof obtenerEscaneoManual === "function" && obtenerEscaneoManual()) {
-        numberingHelp.innerText = "Seleccione una ubicación para el vehículo.\nLas posiciones ocupadas no se pueden asignar.";
+        numberingHelp.innerText = "Seleccione una ubicación para el vehículo.\nLas posiciones ocupadas no se pueden asignar.\nLa ubicación seleccionada será usada para el escaneo.";
         return;
     }
 
@@ -736,7 +736,7 @@ function actualizarAyudaNumeracion() {
             const capacidad = obtenerCochesPorCarril();
 
             numberingHelp.innerText =
-                `Se asignará: carril ${inicio}, posiciones 1 a ${capacidad}.\nLuego continuará con el siguiente carril.`;
+                `Se asignará: carril ${inicio}, posiciones 1 a ${capacidad}.\nLuego continuará con el siguiente carril.\nLa numeración seguirá el orden de los carriles.`;
 
             numberingHelp.classList.add("editable-j");
             return;

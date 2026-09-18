@@ -338,7 +338,7 @@ function actualizarPreviewCambioUbicacion() {
         const filaValida =
             Number.isFinite(fila) &&
             fila >= 1 &&
-            fila <= 6;
+            fila <= 5;
 
         if (
             !calleValida ||
@@ -620,12 +620,12 @@ function confirmarCambioUbicacion() {
         if (
             !Number.isFinite(fila) ||
             fila < 1 ||
-            fila > 6
+            fila > 5
         ) {
 
             // EDITABLE: mensaje de error
             mostrarAlerta(
-                "Seleccione una fila valida entre 1 y 6."
+                "Seleccione una fila valida entre 1 y 5."
             );
 
             return;
