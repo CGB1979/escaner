@@ -2,159 +2,238 @@ function actualizarOpcionesPlaya() {
 
     const esJ = esPlayaEspecial(playaSelect.value);
 
+    modoPares.parentElement.classList.toggle("hidden", esJ);
+    modoImpares.parentElement.classList.toggle("hidden", esJ);
+    modoContinua.parentElement.classList.remove("hidden");
+
+    let opcionFila = document.getElementById("modoPorFilaContainer");
+    let opcionZigZag = document.getElementById("modoZigZagContainer");
+
     if (esJ) {
-
-        modoPares.parentElement.classList.add("hidden");
-        modoImpares.parentElement.classList.add("hidden");
-        modoContinua.parentElement.classList.remove("hidden");
-
-        let opcionFila = document.getElementById("modoPorFilaContainer");
-
-        if (!opcionFila) {
-
-            opcionFila = document.createElement("div");
-
-            opcionFila.id = "modoPorFilaContainer";
-            opcionFila.className = "numbering-option";
-
-            opcionFila.innerHTML = `
-                <input
-                    type="radio"
-                    name="modoNumeracion"
-                    id="modoPorFila"
-                    value="porFila"
-                >
-
-                <!-- EDITABLE: texto de la opcion creada para Playa especial -->
-                <label for="modoPorFila">
-                    Por fila
-                </label>
-            `;
-
-            document
-                .querySelector(".numbering-options")
-                .appendChild(opcionFila);
-
-            document
-                .getElementById("modoPorFila")
-                .addEventListener("change", function() {
-
-                    actualizarControlesPlaya();
-                    guardarConfiguracionNumeracion();
-                    actualizarPantalla();
-
-                });
-
-        } else {
-
-            opcionFila.classList.remove("hidden");
-
+        const modoSeleccionado = obtenerModoNumeracion();
+        if (!["continua", "porFila", "zigzag"].includes(modoSeleccionado)) {
+            modoContinua.checked = true;
+            configuracionNumeracion.modo = "continua";
+            configuracionNumeracion.inversa = false;
         }
 
+        if (!opcionFila) {
+            opcionFila = document.createElement("div");
+            opcionFila.id = "modoPorFilaContainer";
+            opcionFila.className = "numbering-option";
+            opcionFila.innerHTML = `
+                <input type="radio" name="modoNumeracion" id="modoPorFila" value="porFila">
+                <label for="modoPorFila">Por fila</label>
+            `;
+            document.querySelector(".numbering-options").appendChild(opcionFila);
+            document.getElementById("modoPorFila").addEventListener("change", function() {
+                ajustarNumeroInicialPorModo();
+            });
+        } else {
+            opcionFila.classList.remove("hidden");
+        }
+
+        if (!opcionZigZag) {
+            opcionZigZag = document.createElement("div");
+            opcionZigZag.id = "modoZigZagContainer";
+            opcionZigZag.className = "numbering-option";
+            opcionZigZag.innerHTML = `
+                <input type="radio" name="modoNumeracion" id="modoZigZag" value="zigzag">
+                <label for="modoZigZag">ZigZag</label>
+            `;
+            document.querySelector(".numbering-options").appendChild(opcionZigZag);
+            document.getElementById("modoZigZag").addEventListener("change", function() {
+                ajustarNumeroInicialPorModo();
+            });
+        } else {
+            opcionZigZag.classList.remove("hidden");
+        }
+
+        const radioActual = document.querySelector(
+            'input[name="modoNumeracion"][value="' + obtenerModoNumeracion() + '"]'
+        );
+        if (radioActual) radioActual.checked = true;
+
+        actualizarFilaSegunCapacidad();
         actualizarControlesPlaya();
-
         return;
-
     }
 
-    modoPares.parentElement.classList.remove("hidden");
-    modoImpares.parentElement.classList.remove("hidden");
+    if (opcionFila) opcionFila.classList.add("hidden");
+    if (opcionZigZag) opcionZigZag.classList.add("hidden");
 
-    const opcionFila = document.getElementById("modoPorFilaContainer");
-
-    if (opcionFila) {
-        opcionFila.classList.add("hidden");
+    const modoNormal = obtenerModoNumeracion();
+    if (!["continua", "pares", "impares"].includes(modoNormal)) {
+        modoContinua.checked = true;
+        configuracionNumeracion.modo = "continua";
+        configuracionNumeracion.inversa = false;
     }
 
-    organizarControlesInicio(false);
-
-    numeroInicialContainer.classList.remove("hidden");
-    filaInicialContainer.classList.add("hidden");
-
+    organizarControlesInicio();
+    actualizarControlesPlaya();
 }
 
-function organizarControlesInicio(modoPorFila) {
+function obtenerCochesPorCarril() {
+    if (!cochesPorCarril) return 5;
+    let cantidad = parseInt(cochesPorCarril.value, 10);
+    if (!Number.isFinite(cantidad) || cantidad < 1 || cantidad > 6) {
+        cantidad = 5;
+        cochesPorCarril.value = String(cantidad);
+    }
+    return cantidad;
+}
+
+function actualizarFilaSegunCapacidad() {
+    if (!filaInicial) return;
+
+    const capacidad = obtenerCochesPorCarril();
+    const valorActual = parseInt(filaInicial.value, 10);
+    const valorSeguro = Number.isFinite(valorActual) && valorActual >= 1 && valorActual <= capacidad
+        ? valorActual
+        : 1;
+
+    filaInicial.replaceChildren();
+    for (let i = 1; i <= capacidad; i++) {
+        const option = document.createElement("option");
+        option.value = String(i);
+        option.textContent = `Fila ${i}`;
+        filaInicial.appendChild(option);
+    }
+    filaInicial.value = String(valorSeguro);
+}
+
+function guardarCochesPorCarril() {
+    obtenerCochesPorCarril();
+    actualizarFilaSegunCapacidad();
+
+    // La cantidad es solo de esta sesion. Si se cambia despues de haber
+    // avanzado, reiniciamos la secuencia de ese Playa + Bloque; las
+    // posiciones ya ocupadas se siguen omitiendo automaticamente.
+    if (esPlayaEspecial(playaSelect.value)) {
+        reiniciarProgresoNumeracion(playaSelect.value, bloqueSelect.value);
+    }
+
+    actualizarAyudaNumeracion();
+    actualizarPantalla();
+}
+
+function organizarControlesInicio() {
 
     const contenedor = document.getElementById("controlesInicioRow");
+    if (!contenedor) return;
 
-    if (!contenedor) {
-        return;
-    }
+    const elementos = [
+        numeroInicialContainer,
+        document.getElementById("cochesPorCarrilContainer"),
+        filaInicialContainer,
+        document.getElementById("inversaContainer"),
+        document.getElementById("escaneoManualContainer")
+    ].filter(Boolean);
 
-    if (numeroInicialContainer.parentElement !== contenedor) {
-        contenedor.appendChild(numeroInicialContainer);
-    }
+    elementos.forEach(function(elemento) {
+        if (elemento.parentElement !== contenedor) contenedor.appendChild(elemento);
+    });
 
-    const inversaContainer = document.getElementById("inversaContainer");
+    const modo = obtenerModoNumeracion();
+    const esJ = esPlayaEspecial(playaSelect.value);
+    const manual = typeof obtenerEscaneoManual === "function" && obtenerEscaneoManual() && modo === "continua";
 
-    if (inversaContainer && inversaContainer.parentElement !== contenedor) {
-        contenedor.appendChild(inversaContainer);
-    }
-
-    if (filaInicialContainer.parentElement !== contenedor) {
-        contenedor.appendChild(filaInicialContainer);
+    // Orden visual solicitado:
+    // Continua -> Numero inicial | Coches por carril | Asignacion Manual
+    // Por fila -> Numero inicial | Fila | Asignar a la inversa
+    // ZigZag -> Numero inicial | Coches por carril
+    // Normales -> se conserva la distribucion anterior.
+    let columnas = 2;
+    if (esJ && (modo === "continua" || modo === "porFila") && !manual) {
+        columnas = 3;
     }
 
     contenedor.style.display = "grid";
     contenedor.style.gap = "12px";
-    contenedor.style.gridTemplateColumns = modoPorFila
-        ? "1fr 1fr 1fr"
-        : "1fr 1fr";
+    contenedor.style.gridTemplateColumns = `repeat(${columnas}, minmax(0, 1fr))`;
 
+    const posiciones = [
+        numeroInicialContainer,
+        document.getElementById("cochesPorCarrilContainer"),
+        filaInicialContainer,
+        document.getElementById("inversaContainer"),
+        document.getElementById("escaneoManualContainer")
+    ];
+
+    posiciones.forEach(function(elemento) {
+        if (!elemento) return;
+        elemento.style.gridColumn = "auto";
+        elemento.style.gridRow = "auto";
+    });
+
+    if (esJ && modo === "continua" && !manual) {
+        numeroInicialContainer.style.gridColumn = "1";
+        const capacidad = document.getElementById("cochesPorCarrilContainer");
+        if (capacidad) capacidad.style.gridColumn = "2";
+        const manualContainer = document.getElementById("escaneoManualContainer");
+        if (manualContainer) manualContainer.style.gridColumn = "3";
+    } else if (esJ && modo === "porFila" && !manual) {
+        numeroInicialContainer.style.gridColumn = "1";
+        filaInicialContainer.style.gridColumn = "2";
+        const inversa = document.getElementById("inversaContainer");
+        if (inversa) inversa.style.gridColumn = "3";
+    } else if (esJ && modo === "zigzag" && !manual) {
+        numeroInicialContainer.style.gridColumn = "1";
+        const capacidad = document.getElementById("cochesPorCarrilContainer");
+        if (capacidad) capacidad.style.gridColumn = "2";
+    } else if (manual) {
+        const manualContainer = document.getElementById("escaneoManualContainer");
+        if (manualContainer) manualContainer.style.gridColumn = "2";
+    } else {
+        const inversa = document.getElementById("inversaContainer");
+        if (inversa) inversa.style.gridColumn = "2";
+        const manualContainer = document.getElementById("escaneoManualContainer");
+        if (manualContainer) manualContainer.style.gridColumn = "2";
+    }
 }
 
 function actualizarControlesPlaya() {
 
     const esJ = esPlayaEspecial(playaSelect.value);
     const modoActual = obtenerModoNumeracion();
+    const manual = typeof obtenerEscaneoManual === "function" && obtenerEscaneoManual() && modoActual === "continua";
     const inversaControl = document.getElementById("asignarInversa");
 
-    if (inversaControl) {
-
-        // En playas normales, Continua no admite asignacion inversa.
-        // Las playas especiales conservan su logica propia de inversion.
-        const habilitada = esJ || modoActual !== "continua";
-
-        inversaControl.disabled = !habilitada;
-
-        if (!habilitada && inversaControl.checked) {
-            inversaControl.checked = false;
-        }
-
+    if (typeof aplicarModoEscaneoManual === "function") {
+        aplicarModoEscaneoManual();
     }
+
+    if (inversaControl) {
+        const habilitada = modoActual === "porFila" || (!esJ && modoActual !== "continua");
+        inversaControl.disabled = !habilitada;
+        if (!habilitada && inversaControl.checked) inversaControl.checked = false;
+    }
+
+    if (manual) return;
 
     if (!esJ) {
-
-        organizarControlesInicio(false);
-
+        organizarControlesInicio();
         numeroInicialContainer.classList.remove("hidden");
         filaInicialContainer.classList.add("hidden");
-
         numberingHelp.classList.remove("editable-j");
-
         return;
-
     }
 
-    const modo = obtenerModoNumeracion();
-
-    // En playas especiales tambien debe mostrarse el numero inicial,
-    // igual que en las playas normales. Este valor indica el carril
-    // desde el que comienza la asignacion.
-    organizarControlesInicio(modo === "porFila");
     numeroInicialContainer.classList.remove("hidden");
 
-    // En modo "Por fila" se muestra ademas la fila de inicio,
-    // ubicada junto al numero inicial para conservar la misma altura
-    // y armonia visual de la configuracion.
-    if (modo === "porFila") {
+    if (modoActual === "porFila") {
         filaInicialContainer.classList.remove("hidden");
     } else {
         filaInicialContainer.classList.add("hidden");
     }
 
-    numberingHelp.classList.add("editable-j");
+    if (modoActual === "continua" || modoActual === "zigzag") {
+        const capacidad = document.getElementById("cochesPorCarrilContainer");
+        if (capacidad) capacidad.classList.remove("hidden");
+    }
 
+    numberingHelp.classList.add("editable-j");
+    organizarControlesInicio();
 }
 
 function obtenerModoNumeracion() {
@@ -178,7 +257,7 @@ function obtenerFilaInicial() {
         10
     );
 
-    if (!Number.isFinite(fila) || fila < 1 || fila > 5) {
+    if (!Number.isFinite(fila) || fila < 1 || fila > obtenerCochesPorCarril()) {
         fila = 1;
     }
 
@@ -230,7 +309,10 @@ function guardarConfiguracionNumeracion(reiniciarProgreso) {
             ? Number(numeroInicialBase)
             : inicio,
         filaInicio: fila,
-        inversa: inversa
+        inversa: inversa,
+        manual: typeof obtenerEscaneoManual === "function" && obtenerEscaneoManual() && modo === "continua",
+        manualCarril: typeof obtenerUbicacionManual === "function" ? obtenerUbicacionManual().carril : 1,
+        manualPosicion: typeof obtenerUbicacionManual === "function" ? obtenerUbicacionManual().posicion : 1
     };
 
     localStorage.setItem(
@@ -246,6 +328,9 @@ function guardarConfiguracionNumeracion(reiniciarProgreso) {
     }
 
     actualizarAyudaNumeracion();
+    if (typeof aplicarModoEscaneoManual === "function") {
+        aplicarModoEscaneoManual();
+    }
 
 }
 
@@ -271,12 +356,16 @@ function cargarConfiguracionNumeracion() {
     );
 
     let inversa = configuracionNumeracion.inversa === true;
+    const manualGuardado = configuracionNumeracion.manual === true;
+    const manualCarrilGuardado = parseInt(configuracionNumeracion.manualCarril, 10);
+    const manualPosicionGuardada = parseInt(configuracionNumeracion.manualPosicion, 10);
 
     if (
         modo !== "continua" &&
         modo !== "pares" &&
         modo !== "impares" &&
-        modo !== "porFila"
+        modo !== "porFila" &&
+        modo !== "zigzag"
     ) {
         modo = "continua";
     }
@@ -291,7 +380,7 @@ function cargarConfiguracionNumeracion() {
 
     numeroInicialBase = inicioBaseGuardado;
 
-    if (!Number.isFinite(fila) || fila < 1 || fila > 5) {
+    if (!Number.isFinite(fila) || fila < 1 || fila > obtenerCochesPorCarril()) {
         fila = 1;
     }
 
@@ -312,8 +401,9 @@ function cargarConfiguracionNumeracion() {
     }
 
     if (
-        !esPlayaEspecial(playaSelect.value) &&
-        modo === "continua"
+        (!esPlayaEspecial(playaSelect.value) && modo === "continua") ||
+        modo === "zigzag" ||
+        (esPlayaEspecial(playaSelect.value) && modo === "continua")
     ) {
         inversa = false;
     }
@@ -323,7 +413,10 @@ function cargarConfiguracionNumeracion() {
         inicio: inicio,
         inicioBase: numeroInicialBase,
         filaInicio: fila,
-        inversa: inversa
+        inversa: inversa,
+        manual: manualGuardado && modo === "continua",
+        manualCarril: Number.isFinite(manualCarrilGuardado) && manualCarrilGuardado >= 1 ? manualCarrilGuardado : 1,
+        manualPosicion: Number.isFinite(manualPosicionGuardada) && manualPosicionGuardada >= 1 ? manualPosicionGuardada : 1
     };
 
     let radio = document.querySelector(
@@ -357,6 +450,12 @@ function cargarConfiguracionNumeracion() {
     if (inversaControl) {
         inversaControl.checked = inversa;
     }
+
+    if (typeof escaneoManual !== "undefined" && escaneoManual) {
+        escaneoManual.checked = configuracionNumeracion.manual === true && modo === "continua";
+    }
+    if (typeof manualCarril !== "undefined" && manualCarril) manualCarril.value = configuracionNumeracion.manualCarril || 1;
+    if (typeof manualPosicion !== "undefined" && manualPosicion) manualPosicion.value = configuracionNumeracion.manualPosicion || 1;
 
     actualizarOpcionesPlaya();
     actualizarControlesPlaya();
@@ -598,7 +697,17 @@ filaInicial.addEventListener(
     }
 );
 
+if (cochesPorCarril) {
+    cochesPorCarril.addEventListener("change", guardarCochesPorCarril);
+}
+
+
 function actualizarAyudaNumeracion() {
+
+    if (typeof obtenerEscaneoManual === "function" && obtenerEscaneoManual()) {
+        numberingHelp.innerText = "Escaneo manual: la ubicacion se define con Carril y Posicion antes de escanear.";
+        return;
+    }
 
     const modo =
         obtenerModoNumeracion();
@@ -617,15 +726,27 @@ function actualizarAyudaNumeracion() {
 
         if (modo === "continua") {
 
+            const capacidad = obtenerCochesPorCarril();
+            const ejemplo = Array.from({ length: Math.min(capacidad, 4) }, (_, i) => `${inicio}-${i + 1}`).join(", ");
+
             numberingHelp.innerText =
-                inversa
-                    ? `Se asignara ${inicio}-5, ${inicio}-4, ${inicio}-3, ${inicio}-2, ${inicio}-1 y luego ${inicio - 1}-5, ${inicio - 1}-4...`
-                    : `Se asignara ${inicio}-1, ${inicio}-2, ${inicio}-3, ${inicio}-4, ${inicio}-5 y luego ${inicio + 1}-1, ${inicio + 1}-2...`;
+                `Se asignara ${ejemplo}${capacidad > 4 ? ", ..." : ""} y luego ${inicio + 1}-1, ${inicio + 1}-2...`;
 
-            numberingHelp.classList.add(
-                "editable-j"
-            );
+            numberingHelp.classList.add("editable-j");
+            return;
 
+        }
+
+        if (modo === "zigzag") {
+
+            const capacidad = obtenerCochesPorCarril();
+            const inicioArriba = `${inicio}-1 → ${inicio}-${capacidad}`;
+            const siguienteAbajo = `${inicio + 1}-${capacidad} → ${inicio + 1}-1`;
+
+            numberingHelp.innerText =
+                `ZigZag: ${inicioArriba}, luego ${siguienteAbajo}, y asi sucesivamente.`;
+
+            numberingHelp.classList.add("editable-j");
             return;
 
         }
@@ -695,6 +816,10 @@ function obtenerUbicacionSeleccionada() {
 }
 
 function obtenerAsignacionInversa() {
+
+    if (typeof obtenerEscaneoManual === "function" && obtenerEscaneoManual()) {
+        return false;
+    }
 
     const control =
         document.getElementById(
@@ -810,8 +935,12 @@ function registrarPosicionAsignadaPorEscaner(
         inicio:
             obtenerInicioNumeracion(),
 
-        posicion:
-            posicion
+        posicion: posicion,
+
+        capacidadSesion:
+            esPlayaEspecial(playa)
+                ? obtenerCochesPorCarril()
+                : null
 
     };
 
@@ -979,16 +1108,6 @@ function obtenerSiguienteNumeroNormal(
                 })
         );
 
-    // Si esta Playa + Bloque no tiene vehículos, el progreso anterior
-    // no debe seguir condicionando la próxima asignación.
-    if (posicionesOcupadas.size === 0) {
-        return normalizarNumeroParaDireccion(
-            inicio,
-            modo,
-            inversa
-        );
-    }
-
     while (
         candidato >= 1 &&
         posicionesOcupadas.has(candidato)
@@ -1012,187 +1131,138 @@ function obtenerSiguientePosicionEspecialDesdeProgreso(
     bloque
 ) {
 
-    const modo =
-        obtenerModoNumeracion();
+    const modo = obtenerModoNumeracion();
+    const inversa = obtenerAsignacionInversa();
+    const inicio = obtenerInicioNumeracionEspecial();
+    const capacidad = obtenerCochesPorCarril();
+    const clave = obtenerClaveProgreso(playa, bloque);
+    const estado = progresoNumeracion[clave];
 
-    const inversa =
-        obtenerAsignacionInversa();
+    let estadoValido = !!estado &&
+        estado.modo === modo &&
+        estado.inversa === inversa &&
+        Number(estado.inicio) === Number(inicio);
 
-    const inicio =
-        obtenerInicioNumeracionEspecial();
-
-    const clave =
-        obtenerClaveProgreso(
-            playa,
-            bloque
-        );
-
-    const estado =
-        progresoNumeracion[
-            clave
-        ];
-
-    const hayVehiculosEnUbicacion = vehiculos.some(function(v) {
-        return (
-            v.playa === playa &&
-            v.bloque === bloque &&
-            parsearPosicionEspecial(v.posicion) !== null
-        );
-    });
+    // La capacidad no es una configuracion permanente de la playa. Sin
+    // embargo, se registra en el progreso para poder detectar que un estado
+    // viejo corresponde a otra capacidad y no continuar en una posicion
+    // imposible para la sesion actual.
+    if (estadoValido && modo !== "porFila") {
+        const capacidadEstado = Number(estado.capacidadSesion);
+        if (Number.isFinite(capacidadEstado)) {
+            estadoValido = capacidadEstado === capacidad;
+        } else if (capacidad !== 5) {
+            estadoValido = false;
+        }
+    }
 
     let calle;
     let fila;
 
-    if (!hayVehiculosEnUbicacion) {
+    if (!estadoValido) {
         calle = inicio;
-        fila =
-            modo === "porFila"
-                ? obtenerFilaInicial()
-                : (
-                    inversa
-                        ? 5
-                        : 1
-                );
-    } else if (
-        !estado ||
-        estado.modo !== modo ||
-        estado.inversa !== inversa ||
-        Number(estado.inicio) !== Number(inicio)
-    ) {
-
-        calle = inicio;
-
-        fila =
-            modo === "porFila"
-                ? obtenerFilaInicial()
-                : (
-                    inversa
-                        ? 5
-                        : 1
-                );
-
+        if (modo === "porFila") {
+            fila = obtenerFilaInicial();
+        } else if (modo === "zigzag") {
+            fila = 1;
+        } else {
+            fila = inversa ? capacidad : 1;
+        }
     } else {
-
-        const p =
-            parsearPosicionEspecial(
-                estado.posicion
-            );
+        const p = parsearPosicionEspecial(estado.posicion);
 
         if (!p) {
-
             calle = inicio;
-
-            fila =
-                inversa
-                    ? 5
-                    : (
-                        modo === "porFila"
-                            ? obtenerFilaInicial()
-                            : 1
-                    );
-
+            fila = modo === "porFila"
+                ? obtenerFilaInicial()
+                : (modo === "zigzag" ? 1 : (inversa ? capacidad : 1));
         } else {
-
             calle = p.calle;
             fila = p.fila;
 
             if (modo === "porFila") {
+                calle += inversa ? -1 : 1;
+                fila = obtenerFilaInicial();
+            } else if (modo === "zigzag") {
+                const indiceCarril = calle - inicio;
+                const vaHaciaArriba = indiceCarril % 2 === 0;
 
-                calle +=
-                    inversa
-                        ? -1
-                        : 1;
-
-                fila =
-                    obtenerFilaInicial();
-
-            } else if (inversa) {
-
-                fila--;
-
-                if (fila < 1) {
-
-                    calle--;
-                    fila = 5;
-
+                if (vaHaciaArriba) {
+                    if (fila < capacidad) {
+                        fila++;
+                    } else {
+                        calle++;
+                        fila = capacidad;
+                    }
+                } else {
+                    if (fila > 1) {
+                        fila--;
+                    } else {
+                        calle++;
+                        fila = 1;
+                    }
                 }
-
+            } else if (inversa) {
+                fila--;
+                if (fila < 1) {
+                    calle--;
+                    fila = capacidad;
+                }
             } else {
-
                 fila++;
-
-                if (fila > 5) {
-
+                if (fila > capacidad) {
                     calle++;
                     fila = 1;
-
                 }
-
             }
-
         }
-
     }
 
     while (calle >= 1) {
+        const posicion = convertirPosicionEspecial(calle, fila);
 
-        const posicion =
-            convertirPosicionEspecial(
-                calle,
-                fila
-            );
-
-        if (
-            !posicionEspecialOcupada(
-                playa,
-                bloque,
-                calle,
-                fila
-            )
-        ) {
-
+        if (!posicionEspecialOcupada(playa, bloque, calle, fila)) {
             return posicion;
-
         }
 
         if (modo === "porFila") {
+            calle += inversa ? -1 : 1;
+            fila = obtenerFilaInicial();
+        } else if (modo === "zigzag") {
+            const indiceCarril = calle - inicio;
+            const vaHaciaArriba = indiceCarril % 2 === 0;
 
-            calle +=
-                inversa
-                    ? -1
-                    : 1;
-
-            fila =
-                obtenerFilaInicial();
-
-        } else if (inversa) {
-
-            fila--;
-
-            if (fila < 1) {
-
-                calle--;
-                fila = 5;
-
+            if (vaHaciaArriba) {
+                if (fila < capacidad) {
+                    fila++;
+                } else {
+                    calle++;
+                    fila = capacidad;
+                }
+            } else {
+                if (fila > 1) {
+                    fila--;
+                } else {
+                    calle++;
+                    fila = 1;
+                }
             }
-
+        } else if (inversa) {
+            fila--;
+            if (fila < 1) {
+                calle--;
+                fila = capacidad;
+            }
         } else {
-
             fila++;
-
-            if (fila > 5) {
-
+            if (fila > capacidad) {
                 calle++;
                 fila = 1;
-
             }
-
         }
-
     }
 
     return null;
-
 }
 
 function convertirPosicionEspecial(
@@ -1241,7 +1311,7 @@ function parsearPosicionEspecial(
         !Number.isFinite(fila) ||
         calle < 1 ||
         fila < 1 ||
-        fila > 5
+        fila > 6
     ) {
 
         return null;
@@ -1401,6 +1471,13 @@ function obtenerProximaPosicion(
     playa,
     bloque
 ) {
+
+    if (typeof obtenerEscaneoManual === "function" && obtenerEscaneoManual()) {
+        const manual = obtenerUbicacionManual();
+        return esPlayaEspecial(playa)
+            ? convertirPosicionEspecial(manual.carril, manual.posicion)
+            : manual.posicion;
+    }
 
     if (
         esPlayaEspecial(playa)

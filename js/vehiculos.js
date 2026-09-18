@@ -13,6 +13,10 @@ function ubicacionTexto(v) {
         return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - ${v.posicion || "—"}`;
     }
 
+    if (v.manual === true && Number(v.carril) >= 1 && Number(v.posicionManual) >= 1) {
+        return `Playa ${v.playa || "—"} - Bloque ${v.bloque || "—"} - Carril ${v.carril} - Posicion ${v.posicionManual}`;
+    }
+
     const u = obtenerUbicacionNormal(v.posicion);
 
     return u
@@ -41,9 +45,13 @@ function actualizarPantalla() {
     cantidadVehiculos.innerText =
         registros.length;
 
+    const manual = typeof obtenerEscaneoManual === "function" && obtenerEscaneoManual();
     const siguiente = obtenerProximaPosicion(playa, bloque);
 
-    if (esPlayaEspecial(playa)) {
+    if (manual) {
+        const ubicacion = obtenerUbicacionManual();
+        proximaPosicion.innerHTML = `Carril ${ubicacion.carril}<br><span class="next-position-line">Posicion ${ubicacion.posicion}</span>`;
+    } else if (esPlayaEspecial(playa)) {
 
         const p = parsearPosicionEspecial(siguiente);
 
@@ -120,10 +128,22 @@ function mostrarVehiculos() {
 
             }
 
-            return (
-                Number(a.posicion) -
-                Number(b.posicion)
-            );
+            if (a.manual === true || b.manual === true) {
+                const ca = a.manual === true ? Number(a.carril) : Number(obtenerUbicacionNormal(a.posicion)?.carril || 0);
+                const cb = b.manual === true ? Number(b.carril) : Number(obtenerUbicacionNormal(b.posicion)?.carril || 0);
+                if (ca !== cb) return ca - cb;
+                const pa = a.manual === true ? Number(a.posicionManual) : Number(a.posicion);
+                const pb = b.manual === true ? Number(b.posicionManual) : Number(b.posicion);
+                if (pa !== pb) return pa - pb;
+                return String(a.chasis || '').localeCompare(String(b.chasis || ''), undefined, { numeric: true, sensitivity: "base" });
+            }
+
+            const pa = Number(a.posicion);
+            const pb = Number(b.posicion);
+            const aVal = Number.isFinite(pa) ? pa : Number.MAX_SAFE_INTEGER;
+            const bVal = Number.isFinite(pb) ? pb : Number.MAX_SAFE_INTEGER;
+            if (aVal !== bVal) return aVal - bVal;
+            return String(a.chasis || '').localeCompare(String(b.chasis || ''), undefined, { numeric: true, sensitivity: "base" });
 
         });
 

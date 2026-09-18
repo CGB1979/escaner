@@ -168,7 +168,15 @@ function eliminarVehiculo(chasis) {
 
     `;
 
-    if (esPlayaEspecial(v.playa)) {
+    if (v.manual === true) {
+
+        ubicacion = `
+            Playa ${escapeHTML(v.playa)} - Bloque ${escapeHTML(v.bloque)}
+            <br>
+            Carril ${escapeHTML(v.carril)} - Posicion ${escapeHTML(v.posicionManual)}
+        `;
+
+    } else if (esPlayaEspecial(v.playa)) {
 
         const p =
             parsearPosicionEspecial(
@@ -484,6 +492,10 @@ async function exportarCSV() {
                 } else {
                     ubicacion = `${v.playa} - ${v.bloque} - ${String(v.posicion)}`;
                 }
+            } else if (v.manual === true) {
+                calle = String(v.carril || "");
+                fila = String(v.posicionManual || v.posicion || "");
+                ubicacion = `${v.playa} - ${v.bloque} - ${calle} - ${fila}`;
             } else {
                 const p = obtenerUbicacionNormal(v.posicion);
 

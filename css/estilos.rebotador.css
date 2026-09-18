@@ -1161,3 +1161,407 @@ button:disabled {
     line-height: 1.15;
     white-space: normal;
 }
+
+/* =========================================================
+   CONTROL DE PLAYA — TEMA FLAT SOBRIO
+   Solo presentación visual. No modifica estructura ni lógica.
+   ========================================================= */
+
+:root {
+    --ui-navy: #111827;
+    --ui-navy-2: #1f2937;
+    --ui-slate: #374151;
+    --ui-muted: #64748b;
+    --ui-border: #cbd5e1;
+    --ui-border-light: #e5e7eb;
+    --ui-bg: #f3f4f6;
+    --ui-blue: #2563eb;
+    --ui-blue-soft: #eff6ff;
+    --ui-green: #10b981;
+    --ui-green-soft: #ecfdf5;
+    --ui-red: #dc2626;
+    --ui-red-soft: #fef2f2;
+    --ui-amber: #f59e0b;
+    --ui-amber-soft: #fffbeb;
+}
+
+html,
+body {
+    background: var(--ui-bg) !important;
+    color: var(--ui-navy);
+}
+
+#app-shell {
+    background: var(--ui-bg);
+}
+
+.app-header {
+    background: var(--ui-navy);
+    color: #fff;
+    box-shadow: none;
+    border-bottom: 1px solid #1f2937;
+}
+
+.app-header h1,
+.card h2,
+.card h3 {
+    color: var(--ui-navy);
+}
+
+.app-header h1,
+.app-header p {
+    color: #fff;
+}
+
+.container {
+    background: transparent;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid var(--ui-border-light);
+    border-radius: 12px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+}
+
+.section-subtitle,
+.position-hint,
+.vehicle-info,
+.empty {
+    color: var(--ui-muted);
+}
+
+label {
+    color: var(--ui-navy-2);
+}
+
+select,
+input {
+    border-color: var(--ui-border);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--ui-navy);
+}
+
+select:focus,
+input:focus {
+    border-color: var(--ui-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+}
+
+.numbering-option label {
+    border-color: var(--ui-border);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--ui-slate);
+    box-shadow: none;
+}
+
+.numbering-option input:checked + label {
+    border-color: var(--ui-blue);
+    background: var(--ui-blue);
+    color: #fff;
+    box-shadow: none;
+}
+
+.numbering-help {
+    background: var(--ui-blue-soft);
+    border-radius: 7px;
+    color: #1e40af;
+}
+
+.numbering-help.editable-j {
+    border-color: #93c5fd;
+}
+
+.numbering-help.editable-j:hover {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.start-number-container,
+.inverse-number-container {
+    color: var(--ui-navy);
+}
+
+.slider {
+    border-color: var(--ui-border);
+    border-radius: 7px;
+    background: #e5e7eb;
+}
+
+.slider:before {
+    border-radius: 5px;
+    color: var(--ui-muted);
+}
+
+.switch input:checked + .slider {
+    border-color: var(--ui-blue);
+    background: #dbeafe;
+}
+
+.switch input:checked + .slider:before {
+    color: var(--ui-blue);
+}
+
+button {
+    border-radius: 7px;
+    box-shadow: none;
+}
+
+button:active {
+    transform: scale(.99);
+}
+
+.btn-primary {
+    background: var(--ui-blue);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.btn-success {
+    background: var(--ui-green);
+    color: #fff;
+}
+
+.btn-danger {
+    background: var(--ui-red);
+    color: #fff;
+}
+
+.btn-warning {
+    background: var(--ui-amber);
+    color: #fff;
+}
+
+.btn-secondary {
+    background: #64748b;
+    color: #fff;
+}
+
+.btn-dark {
+    background: var(--ui-navy);
+    color: #fff;
+}
+
+.btn-rebotador,
+.btn-rebotador-back {
+    background: #fff;
+    color: var(--ui-blue);
+    border: 1px solid var(--ui-blue);
+}
+
+.btn-rebotador:hover,
+.btn-rebotador-back:hover {
+    background: var(--ui-blue-soft);
+    color: #1d4ed8;
+}
+
+.current-location {
+    background: var(--ui-blue-soft);
+    border-color: #bfdbfe;
+    border-radius: 8px;
+}
+
+.current-location-label {
+    color: var(--ui-muted);
+}
+
+.current-location-value {
+    color: var(--ui-blue);
+}
+
+.summary-box {
+    background: #f8fafc;
+    border: 1px solid var(--ui-border-light);
+    border-radius: 8px;
+}
+
+.summary-label {
+    color: var(--ui-slate);
+}
+
+.summary-box .number,
+.vehicle-position {
+    color: var(--ui-blue);
+}
+
+.vehicle {
+    background: #fff;
+    border-color: var(--ui-border-light);
+    border-radius: 8px;
+    box-shadow: none;
+}
+
+.vehicle-chassis {
+    color: var(--ui-navy);
+}
+
+.vehicle-observation {
+    background: var(--ui-amber-soft);
+    border-color: #fde68a;
+    color: #92400e;
+    border-radius: 7px;
+}
+
+.warning {
+    background: var(--ui-amber-soft);
+    border-color: #fde68a;
+    color: #92400e;
+    border-radius: 7px;
+}
+
+.success-message {
+    background: var(--ui-green-soft);
+    border: 1px solid #a7f3d0;
+    color: #047857;
+    border-radius: 7px;
+}
+
+.danger-message {
+    background: var(--ui-red-soft);
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    border-radius: 7px;
+}
+
+/* Scanner: se conserva la cámara y su comportamiento; solo se suaviza la UI. */
+.scanner-header {
+    background: var(--ui-navy);
+}
+
+.scanner-bottom {
+    background: var(--ui-navy-2);
+}
+
+.scan-result {
+    border: 1px solid var(--ui-border-light);
+    border-radius: 8px;
+}
+
+.scanner-status {
+    color: #cbd5e1;
+}
+
+/* Modales: planos, blancos y con sombra mínima. */
+.modal {
+    background: rgba(15, 23, 42, .55);
+}
+
+.modal-content {
+    border-radius: 12px;
+    border: 1px solid var(--ui-border-light);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, .16);
+}
+
+.modal-content h2 {
+    color: var(--ui-navy);
+}
+
+.modal-description {
+    color: var(--ui-muted);
+}
+
+.location-preview {
+    background: var(--ui-blue-soft);
+    border-color: #bfdbfe;
+    color: #1e40af;
+    border-radius: 7px;
+}
+
+.location-preview.valid {
+    background: var(--ui-green-soft);
+    border-color: #a7f3d0;
+    color: #047857;
+}
+
+.location-preview.invalid {
+    background: var(--ui-red-soft);
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+/* Rebotador */
+.excel-status {
+    background: #f8fafc;
+    border: 1px solid var(--ui-border-light);
+    color: var(--ui-muted);
+    border-radius: 7px;
+}
+
+.excel-status strong {
+    color: var(--ui-navy-2);
+}
+
+.excel-action-button {
+    background: var(--ui-blue) !important;
+    border-radius: 7px;
+}
+
+#btnBuscarExcel.excel-cargado {
+    background: var(--ui-green) !important;
+}
+
+.excel-action-button:hover:not(:disabled) {
+    background: #1d4ed8 !important;
+}
+
+.excel-action-button:disabled {
+    background: #94a3b8 !important;
+}
+
+.vehicle-moved {
+    background: var(--ui-amber-soft);
+    border-color: #fde68a;
+    color: #92400e;
+    border-radius: 7px;
+}
+
+.cambio-vehiculo-info {
+    background: #f8fafc;
+    border-color: var(--ui-border-light);
+    border-radius: 8px;
+}
+
+.cambio-chasis {
+    color: var(--ui-navy);
+}
+
+.cambio-ubicacion-actual {
+    border-color: var(--ui-border-light);
+    color: var(--ui-muted);
+}
+
+.coincidencia-item {
+    border-color: var(--ui-border);
+    border-radius: 8px;
+    color: var(--ui-navy);
+}
+
+.fixed-bottom-actions {
+    background: var(--ui-navy) !important;
+    border-top: 1px solid #1f2937;
+    box-shadow: 0 -1px 4px rgba(15, 23, 42, .10);
+}
+
+/* Destructivos y estados conservan su semántica, con estética plana. */
+.danger-outline {
+    border-color: var(--ui-red) !important;
+    color: var(--ui-red) !important;
+    background: #fff !important;
+}
+
+.danger-outline:hover {
+    background: var(--ui-red-soft) !important;
+}
+
+/* Los botones de carga de Excel mantienen texto blanco sobre cualquier estado. */
+.excel-action-button,
+.excel-action-button:hover:not(:disabled),
+.excel-action-button:disabled,
+#btnBuscarExcel.excel-cargado {
+    color: #fff !important;
+}

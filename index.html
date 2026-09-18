@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="css/estilos.css">
 <title>Control de Playa</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#5f9a3d">
+<meta name="theme-color" content="#111827">
 </head>
 <body>
 <div id="app-shell">
@@ -25,64 +25,16 @@
 <!-- EDITABLE: explicacion debajo del titulo -->
 <p class="section-subtitle">Seleccione la ubicacion y como desea asignar los numeros antes de comenzar a escanear.</p>
 <div class="row">
-<div class="form-group"><!-- EDITABLE: nombre del selector --> <label for="playa">Playa</label>  <select id="playa">  <!-- EDITABLE: texto inicial del selector -->
-<option value="" selected=""></option>
-<option value="A">A</option>
-<option value="B">B</option>
-<option value="C">C</option>
-<option value="C1">C1</option>
-<option value="D">D</option>
-<option value="E">E</option>
-<option value="E2">E2</option>
-<option value="F">F</option>
-<option value="G">G</option>
-<option value="H">H</option>
-<option value="I">I</option>
-<option value="J">J</option>
-<option value="K">K</option>
-<option value="L">L</option>
-<option value="M">M</option>
-<option value="N">N</option>
-<option value="O">O</option>
-<option value="P">P</option>
-<option value="Q">Q</option>
-<option value="X">X</option>
-<option value="Y">Y</option>
-<option value="Z">Z</option>
-<option value="Perimetro">Perimetero</option>
-<option value="Lateral">Lateral</option>
-</select></div>
-<div class="form-group"><!-- EDITABLE: nombre del selector --> <label for="bloque">Bloque</label>  <select id="bloque">  <!-- EDITABLE: texto inicial del selector -->
-<option value="" selected=""></option>
-<option value="A">A</option>
-<option value="B">B</option>
-<option value="C">C</option>
-<option value="D">D</option>
-<option value="E">E</option>
-<option value="F">F</option>
-<option value="G">G</option>
-<option value="H">H</option>
-<option value="I">I</option>
-<option value="J">J</option>
-<option value="K">K</option>
-<option value="L">L</option>
-<option value="M">M</option>
-<option value="N">N</option>
-<option value="O">O</option>
-<option value="P">P</option>
-<option value="Q">Q</option>
-<option value="X">X</option>
-<option value="Y">Y</option>
-<option value="Z">Z</option>
-<option value="b1">1</option>
-<option value="b2">2</option>
-<option value="b3">3</option>
-<option value="b4">4</option>
-<option value="b5">5</option>
-</select></div>
+<div class="form-group"><!-- EDITABLE: nombre del selector --> <label for="playa">Playa</label>  <select id="playa"></select></div>
+<div class="form-group"><!-- EDITABLE: nombre del selector --> <label for="bloque">Bloque</label>  <select id="bloque"></select></div>
 </div>
-<div class="form-group"><!-- EDITABLE: nombre de esta opcion --> <label>Tipo de numeracion</label>
-<div class="numbering-options">
+<div class="form-group" id="configNumeracionGroup">
+<div class="manual-location-row hidden" id="manualLocationRow">
+<div class="start-number-container"><label for="manualCarril">Carril</label><input type="number" id="manualCarril" min="1" step="1" value="1" inputmode="numeric" /></div>
+<div class="start-number-container"><label for="manualPosicion">Posicion</label><input type="number" id="manualPosicion" min="1" step="1" value="1" inputmode="numeric" /></div>
+</div>
+<!-- EDITABLE: nombre de esta opcion --> <label id="tipoNumeracionLabel">Tipo de numeracion</label>
+<div class="numbering-options" id="numberingOptions">
 <div class="numbering-option"><input type="radio" name="modoNumeracion" id="modoContinua" value="continua" />  <!-- EDITABLE: texto de la opcion --> <label for="modoContinua">Continua</label></div>
 <div class="numbering-option"><input type="radio" name="modoNumeracion" id="modoPares" value="pares" />  <!-- EDITABLE: texto de la opcion --> <label for="modoPares">Pares</label></div>
 <div class="numbering-option"><input type="radio" name="modoNumeracion" id="modoImpares" value="impares" />  <!-- EDITABLE: texto de la opcion --> <label for="modoImpares">Impares</label></div>
@@ -91,13 +43,23 @@
 <div class="numbering-help" id="numberingHelp">Se asignara 1, 2, 3, 4...</div>
 <div class="start-number-row" id="controlesInicioRow">
 <div class="start-number-container" id="numeroInicialContainer"><!-- EDITABLE: nombre del campo --> <label for="numeroInicial">Numero inicial</label>  <input type="number" id="numeroInicial" min="1" step="1" value="1" /></div>
+<div class="start-number-container hidden" id="cochesPorCarrilContainer"><label for="cochesPorCarril">Coches por carril</label><select id="cochesPorCarril">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5" selected>5</option>
+<option value="6">6</option>
+</select></div>
 <div class="start-number-container inverse-number-container" id="inversaContainer"><label for="asignarInversa">Asignar a la inversa</label><label class="switch"><input type="checkbox" id="asignarInversa"><span class="slider"></span></label></div>
+<div class="start-number-container manual-scan-container hidden" id="escaneoManualContainer"><label for="escaneoManual">Asignación Manual</label><label class="switch"><input type="checkbox" id="escaneoManual"><span class="slider"></span></label></div>
 <div class="start-number-container hidden" id="filaInicialContainer"><!-- EDITABLE: nombre del campo --> <label for="filaInicial">Fila</label>  <select id="filaInicial">
 <option value="1">Fila 1</option>
 <option value="2">Fila 2</option>
 <option value="3">Fila 3</option>
 <option value="4">Fila 4</option>
 <option value="5">Fila 5</option>
+<option value="6">Fila 6</option>
 </select></div>
 </div>
 <!-- EDITABLE: texto del boton --> <button class="btn-primary big-button" onclick="abrirScanner()"> ESCANEAR VEHiCULO </button>
@@ -153,7 +115,7 @@
 </div>
 <div class="scanner-bottom">
 <div class="scanner-location">Playa <strong id="scannerPlaya">A</strong> - Bloque <strong id="scannerBloque">A</strong> <br />
-<!-- EDITABLE: texto --> Proxima posicion: <strong id="scannerPosicion">1</strong></div>
+<!-- EDITABLE: texto --> Ubicacion seleccionada: <strong id="scannerPosicion">Carril 1 - Posicion 1</strong></div>
 <div id="scanResult" class="scan-result hidden">
 <h3 id="scanTitulo">&nbsp;</h3>
 <div id="scanInfo">&nbsp;</div>
@@ -162,7 +124,11 @@
 </div>
 <!-- =========================================
      INGRESO MANUAL
-     ========================================= -->  <button id="btnIngresarManual" class="btn-success" onclick="abrirIngresoManual()">     Ingresar manualmente </button>   <!-- =========================================
+     ========================================= -->  <button id="btnIngresarManual" class="btn-success" onclick="abrirIngresoManual()">     Ingresar manualmente </button>
+<!-- =========================================
+     SALTAR POSICION
+     ========================================= -->
+<button id="btnSaltarPosicion" class="btn-success" onclick="saltarPosicionScanner()">     Saltar posición </button>   <!-- =========================================
      SALIR DEL ESCANEO
      ========================================= -->  <button id="btnSalirScanner" class="btn-danger" onclick="cerrarScanner()">     Salir de escaneo </button>   <!-- =========================================
      MENSAJE DE ESTADO
@@ -186,35 +152,8 @@
 <h2>Cambiar ubicacion</h2>
 <!-- EDITABLE: explicacion -->
 <p class="modal-description">Seleccione la nueva playa, bloque y ubicacion donde desea reubicar el vehiculo.</p>
-<div class="form-group"><!-- EDITABLE: etiqueta --> <label for="cambioPlaya">Playa</label>  <select id="cambioPlaya">
-<option value="A">A</option>
-<option value="B">B</option>
-<option value="C">C</option>
-<option value="C1">C1</option>
-<option value="D">D</option>
-<option value="E">E</option>
-<option value="E1">E1</option>
-<option value="F">F</option>
-<option value="G">G</option>
-<option value="H">H</option>
-<option value="I">I</option>
-<option value="J">J</option>
-<option value="P">P</option>
-</select></div>
-<div class="form-group"><!-- EDITABLE: etiqueta --> <label for="cambioBloque">Bloque</label>  <select id="cambioBloque">
-<option value="A">A</option>
-<option value="B">B</option>
-<option value="C">C</option>
-<option value="D">D</option>
-<option value="E">E</option>
-<option value="F">F</option>
-<option value="G">G</option>
-<option value="H">H</option>
-<option value="I">I</option>
-<option value="J">J</option>
-<option value="K">K</option>
-<option value="L">L</option>
-</select></div>
+<div class="form-group"><!-- EDITABLE: etiqueta --> <label for="cambioPlaya">Playa</label>  <select id="cambioPlaya"></select></div>
+<div class="form-group"><!-- EDITABLE: etiqueta --> <label for="cambioBloque">Bloque</label>  <select id="cambioBloque"></select></div>
 <div class="form-group" id="cambioNumeroContainer"><!-- EDITABLE: etiqueta --> <label for="cambioNumero">Numero / ubicacion</label>  <input type="number" id="cambioNumero" min="1" step="1" />  <!-- EDITABLE: texto de ayuda -->
 <div class="position-hint" id="positionHint">Numero sugerido automaticamente.</div>
 </div>
@@ -226,6 +165,7 @@
 <option value="3">3</option>
 <option value="4">4</option>
 <option value="5">5</option>
+<option value="6">6</option>
 </select></div>
 </div>
 <!-- EDITABLE: texto de vista previa -->
@@ -265,24 +205,26 @@
 
   try {
     const versionUrl = "js/version.js?check=" + Date.now();
-    const response = await fetch(versionUrl, { cache: "no-store" });
-
-    if (!response.ok) {
-      throw new Error("No se pudo comprobar la versión.");
-    }
-
-    const source = await response.text();
-    const match = source.match(/APP_VERSION\s*=\s*["']([^"']+)["']/);
-
-    if (!match) {
-      throw new Error("Versión inválida.");
-    }
-
-    const latestVersion = match[1];
     const versionKey = "control-playa-version";
     const currentUrl = new URL(window.location.href);
     const currentVersion = currentUrl.searchParams.get("appv");
     const storedVersion = localStorage.getItem(versionKey);
+    let latestVersion = storedVersion || currentVersion || "1.1.9.5";
+
+    try {
+      const response = await fetch(versionUrl, { cache: "no-store" });
+      if (response.ok) {
+        const source = await response.text();
+        const match = source.match(/APP_VERSION\s*=\s*["']([^"']+)["']/);
+        if (match) latestVersion = match[1];
+      }
+    } catch (_) {
+      // Sin red, continuar con la versión cacheada/actual.
+    }
+
+    if (!latestVersion) {
+      throw new Error("No se pudo determinar la versión de la aplicación.");
+    }
 
     if (storedVersion !== latestVersion || currentVersion !== latestVersion) {
       if ("caches" in window) {
@@ -328,6 +270,8 @@
     await loadScript("https://unpkg.com/html5-qrcode");
 
     const localScripts = [
+      "js/lista_playas.js",
+      "js/lista_bloques.js",
       "js/configuracion.js",
       "js/playasEspeciales.js",
       "js/numeracion.js",

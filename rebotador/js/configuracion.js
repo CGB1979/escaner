@@ -124,15 +124,6 @@ let bloqueandoLectura = false;
 let vehiculoActual = null;
 let modoCambio = "existente";
 
-const PLAYAS_DISPONIBLES = [
-  "A","B","C","C1","D","E","E1","F","G","H","I","J",
-  "K","L","M","N","O","P","Q","X","Y","Z"
-];
-
-const BLOQUES_DISPONIBLES = [
-  "A","B","C","D","E","F","G","H","I","J","K","L",
-  "M","N","O","P","Q","X","Y","Z"
-];
 
 const playaSelect = document.getElementById("playa");
 const bloqueSelect = document.getElementById("bloque");

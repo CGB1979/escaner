@@ -338,7 +338,7 @@ function actualizarPreviewCambioUbicacion() {
         const filaValida =
             Number.isFinite(fila) &&
             fila >= 1 &&
-            fila <= 5;
+            fila <= 6;
 
         if (
             !calleValida ||
@@ -620,12 +620,12 @@ function confirmarCambioUbicacion() {
         if (
             !Number.isFinite(fila) ||
             fila < 1 ||
-            fila > 5
+            fila > 6
         ) {
 
             // EDITABLE: mensaje de error
             mostrarAlerta(
-                "Seleccione una fila valida entre 1 y 5."
+                "Seleccione una fila valida entre 1 y 6."
             );
 
             return;
@@ -1090,30 +1090,20 @@ function confirmarIngresoManual() {
 
 function actualizarPosicionScanner() {
 
-    const playa =
-        playaSelect.value;
+    const playa = playaSelect.value;
+    const bloque = bloqueSelect.value;
+    const manual = typeof obtenerEscaneoManual === "function" && obtenerEscaneoManual();
 
-    const bloque =
-        bloqueSelect.value;
+    document.getElementById("scannerPlaya").innerText = playa;
+    document.getElementById("scannerBloque").innerText = bloque;
 
-    const posicion =
-        obtenerProximaPosicion(
-            playa,
-            bloque
-        );
+    if (manual) {
+        const ubicacion = obtenerUbicacionManual();
+        document.getElementById("scannerPosicion").innerText =
+            `Carril ${ubicacion.carril} - Posicion ${ubicacion.posicion}`;
+        return;
+    }
 
-    document
-        .getElementById("scannerPlaya")
-        .innerText =
-        playa;
-
-    document
-        .getElementById("scannerBloque")
-        .innerText =
-        bloque;
-
-    document
-        .getElementById("scannerPosicion")
-        .innerText =
-        posicion;
+    const posicion = obtenerProximaPosicion(playa, bloque);
+    document.getElementById("scannerPosicion").innerText = posicion;
 }

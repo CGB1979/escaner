@@ -9,6 +9,8 @@ const APP_ASSETS = [
   './index.html',
   './css/estilos.css',
 
+  './js/lista_playas.js',
+  './js/lista_bloques.js',
   './js/configuracion.js',
   './js/modal.js',
   './js/playasEspeciales.js',
@@ -83,7 +85,7 @@ self.addEventListener('fetch', event => {
         if (
           response &&
           response.status === 200 &&
-          response.type === 'basic'
+          response.type !== 'opaque'
         ) {
           const responseClone = response.clone();
 

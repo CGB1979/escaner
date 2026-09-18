@@ -63,12 +63,22 @@ function programarGuardadoSesion() {
   }, 150);
 }
 
-window.addEventListener("pagehide", () => {
-  // Los cambios normales ya se guardan en cada operación. Este guardado
-  // adicional cubre una recarga/cierre inmediatamente posterior a un cambio.
-  if (!restaurandoSesion && datosExcel.workbook && datosExcel.worksheet) {
-    guardarSesionAhora();
+async function asegurarGuardadoAntesDeSalir() {
+  if (restaurandoSesion || !datosExcel.workbook || !datosExcel.worksheet) return;
+  guardadoPendiente = false;
+  await guardarSesionAhora();
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "hidden") {
+    asegurarGuardadoAntesDeSalir();
   }
+});
+
+window.addEventListener("pagehide", () => {
+  // Los cambios normales ya se guardan en cada operación.
+  // Este guardado adicional reduce el riesgo de perder un cambio reciente.
+  asegurarGuardadoAntesDeSalir();
 });
 
 async function leerSesionGuardada() {

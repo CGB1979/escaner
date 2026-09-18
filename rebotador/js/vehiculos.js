@@ -72,6 +72,30 @@ function actualizarPantalla() {
     return;
   }
 
+  // Mostrar los vehículos en orden ascendente de ubicación (1, 2, 3, 4...).
+  // En playas especiales se ordena por Carril/Posición; en normales por ubicación.
+  resultado.sort((a, b) => {
+    if (esPlayaEspecial(a.playa) || esPlayaEspecial(b.playa)) {
+      const pa = parsearPosicionEspecial(a.posicion);
+      const pb = parsearPosicionEspecial(b.posicion);
+      if (pa && pb) return (Number(pa.calle) - Number(pb.calle)) || (Number(pa.fila) - Number(pb.fila));
+      if (pa) return -1;
+      if (pb) return 1;
+    }
+
+    const na = Number(a.posicion);
+    const nb = Number(b.posicion);
+    const aVal = Number.isFinite(na) ? na : Number.MAX_SAFE_INTEGER;
+    const bVal = Number.isFinite(nb) ? nb : Number.MAX_SAFE_INTEGER;
+    if (aVal !== bVal) return aVal - bVal;
+
+    const ca = Number(a.carril);
+    const cb = Number(b.carril);
+    if (Number.isFinite(ca) && Number.isFinite(cb) && ca !== cb) return ca - cb;
+
+    return String(a.chasis || '').localeCompare(String(b.chasis || ''), undefined, { numeric: true, sensitivity: 'base' });
+  });
+
   listaVehiculos.innerHTML = resultado.map(v => `
     <div class="vehicle">
       <div class="vehicle-position">Chasis</div>

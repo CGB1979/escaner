@@ -301,11 +301,13 @@ reproducirSonidoNuevo();
     const ubicacion =
         obtenerUbicacionSeleccionada();
 
-    const posicion =
-        obtenerProximaPosicion(
-            ubicacion.playa,
-            ubicacion.bloque
-        );
+    const manual = typeof obtenerEscaneoManual === "function" && obtenerEscaneoManual();
+    const ubicacionManual = manual ? obtenerUbicacionManual() : null;
+    const posicion = manual
+        ? (esPlayaEspecial(ubicacion.playa)
+            ? convertirPosicionEspecial(ubicacionManual.carril, ubicacionManual.posicion)
+            : ubicacionManual.posicion)
+        : obtenerProximaPosicion(ubicacion.playa, ubicacion.bloque);
 
     if (posicion === null || posicion === undefined || posicion === "") {
         reproducirSonidoError();
@@ -322,6 +324,9 @@ reproducirSonidoNuevo();
         playa: ubicacion.playa,
         bloque: ubicacion.bloque,
         posicion: posicion,
+        carril: manual ? ubicacionManual.carril : null,
+        posicionManual: manual ? ubicacionManual.posicion : null,
+        manual: manual,
         observaciones: ""
 
     };
@@ -334,7 +339,15 @@ reproducirSonidoNuevo();
 
     let infoUbicacion = "";
 
-    if (esPlayaEspecial(ubicacion.playa)) {
+    if (manual) {
+
+        infoUbicacion = `
+            <strong>Bloque:</strong> ${escapeHTML(ubicacion.bloque)}<br>
+            <strong>Carril:</strong> ${escapeHTML(ubicacionManual.carril)}<br>
+            <strong>Posicion:</strong> ${escapeHTML(ubicacionManual.posicion)}
+        `;
+
+    } else if (esPlayaEspecial(ubicacion.playa)) {
 
         const p = parsearPosicionEspecial(posicion);
 
@@ -622,6 +635,10 @@ async function guardarNuevoVehiculo() {
                 ? String(r.posicion)
                 : Number(r.posicion),
 
+        carril: r.manual ? Number(r.carril) : null,
+        posicionManual: r.manual ? Number(r.posicionManual) : null,
+        manual: r.manual === true,
+
         observaciones:
             String(r.observaciones || "").trim(),
 
@@ -662,11 +679,16 @@ async function guardarNuevoVehiculo() {
     } else {
 
         const posicionOcupada = vehiculos.some(function(v) {
-            return (
-                v.playa === nuevo.playa &&
-                v.bloque === nuevo.bloque &&
-                Number(v.posicion) === Number(nuevo.posicion)
-            );
+            if (v.playa !== nuevo.playa || v.bloque !== nuevo.bloque) return false;
+            if (nuevo.manual) {
+                if (v.manual === true && Number(v.carril) === Number(nuevo.carril) && Number(v.posicionManual) === Number(nuevo.posicionManual)) return true;
+                if (v.manual !== true) {
+                    const u = obtenerUbicacionNormal(v.posicion);
+                    return !!u && Number(u.carril) === Number(nuevo.carril) && Number(u.posicion) === Number(nuevo.posicionManual);
+                }
+                return false;
+            }
+            return v.manual !== true && Number(v.posicion) === Number(nuevo.posicion);
         });
 
         if (posicionOcupada) {
@@ -683,11 +705,13 @@ async function guardarNuevoVehiculo() {
 
     vehiculos.push(nuevo);
 
-    registrarPosicionAsignadaPorEscaner(
-        nuevo.playa,
-        nuevo.bloque,
-        nuevo.posicion
-    );
+    if (!nuevo.manual) {
+        registrarPosicionAsignadaPorEscaner(
+            nuevo.playa,
+            nuevo.bloque,
+            nuevo.posicion
+        );
+    }
 
     guardarDatos();
     actualizarPantalla();
@@ -707,7 +731,50 @@ async function guardarNuevoVehiculo() {
     document
         .getElementById("scannerStatus")
         .innerText =
-        `Guardado en posicion ${nuevo.posicion}. Escanee el siguiente vehiculo.`;
+        nuevo.manual
+            ? `Guardado en Carril ${nuevo.carril} - Posicion ${nuevo.posicionManual}. Puede cambiar la ubicacion manual y escanear el siguiente vehiculo.`
+            : `Guardado en posicion ${nuevo.posicion}. Escanee el siguiente vehiculo.`;
+
+}
+
+function saltarPosicionScanner() {
+
+    // Solo se puede saltar una posicion cuando no hay un vehiculo
+    // pendiente de confirmar.
+    if (resultadoPendiente) {
+        reproducirSonidoError();
+        document.getElementById("scannerStatus").innerText =
+            "Primero acepte o cancele el vehiculo detectado.";
+        return;
+    }
+
+    const ubicacion = obtenerUbicacionSeleccionada();
+    const posicion = obtenerProximaPosicion(ubicacion.playa, ubicacion.bloque);
+
+    if (posicion === null || posicion === undefined || posicion === "") {
+        reproducirSonidoError();
+        mostrarAlerta("No quedan posiciones disponibles para la configuracion actual.");
+        ultimoCodigo = null;
+        bloqueandoLectura = false;
+        return;
+    }
+
+    // Registrar tambien los saltos en el progreso. Esto permite saltar
+    // incluso la primera posicion, aunque todavia no exista ningun
+    // vehiculo guardado en Playa + Bloque.
+    registrarPosicionAsignadaPorEscaner(
+        ubicacion.playa,
+        ubicacion.bloque,
+        posicion
+    );
+
+    ultimoCodigo = null;
+    bloqueandoLectura = false;
+    actualizarPosicionScanner();
+    reproducirSonidoNuevo();
+
+    document.getElementById("scannerStatus").innerText =
+        `Posicion ${posicion} salteada. Escanee el siguiente vehiculo.`;
 
 }
 

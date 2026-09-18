@@ -440,6 +440,9 @@ function confirmarCambioUbicacion() {
     vehiculos.push(vehiculoActual);
   }
 
+  // El movimiento puede crear una playa/bloque que antes no estaba en el filtro.
+  // Reconstruir los selectores inmediatamente evita tener que salir y volver a entrar.
+  actualizarSelectores();
   actualizarPantalla();
   actualizarEstadoExcel();
 
