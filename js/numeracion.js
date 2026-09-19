@@ -766,7 +766,7 @@ function actualizarAyudaNumeracion() {
             numberingHelp.innerText =
     inversa
         ? inicio === 1
-            ? `Se escaneará la fila ${fila} en inversa desde la posición 1. No existen posiciones menores a 1 para asignar.`
+            ? `Se escaneará la fila ${fila} en inversa desde la posición 1.`
             : `Se escaneará la fila ${fila} en inversa: ${inicio}-${fila}, ${inicio - 1}-${fila}, ${inicio - 2}-${fila}, ${inicio - 3}-${fila}... La asignación continuará hasta llegar a la posición 1.`
         : `Se escaneará la fila ${fila}: ${inicio}-${fila}, ${inicio + 1}-${fila}, ${inicio + 2}-${fila}, ${inicio + 3}-${fila}... La asignación continuará en orden ascendente.`;
 
@@ -791,8 +791,8 @@ function actualizarAyudaNumeracion() {
 
         numberingHelp.innerText =
             inversa
-                ? `Se asignara ${inicio}, ${inicio - 1}, ${inicio - 2}, ${inicio - 3}...`
-                : `Se asignara ${inicio}, ${inicio + 1}, ${inicio + 2}, ${inicio + 3}...`;
+                ? `Se asignara ${inicio}, ${inicio - 1}, ${inicio - 2}, ${inicio - 3}... \n.`
+                : `Se asignara ${inicio}, ${inicio + 1}, ${inicio + 2}, ${inicio + 3}... \n.`;
 
         return;
 
@@ -811,7 +811,7 @@ function actualizarAyudaNumeracion() {
             : 2;
 
     numberingHelp.innerText =
-        `Se asignara ${primero}, ${primero + paso}, ${primero + paso * 2}, ${primero + paso * 3}...`;
+        `Se asignara ${primero}, ${primero + paso}, ${primero + paso * 2}, ${primero + paso * 3}... \n.`;
 
 }
 
