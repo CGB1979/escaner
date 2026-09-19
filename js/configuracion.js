@@ -141,9 +141,7 @@ function aplicarModoEscaneoManual() {
     // automatica por Carril + Posicion. La fila manual esta ubicada
     // debajo de Playa/Bloque, no debajo del selector ON/OFF.
     if (numberingOptions) numberingOptions.classList.toggle("hidden", activo);
-    // El cuadro de informacion debe seguir visible en Asignacion Manual.
-    // El contenido se actualiza desde actualizarAyudaNumeracion().
-    if (numberingHelp) numberingHelp.classList.remove("hidden");
+    if (numberingHelp) numberingHelp.classList.toggle("hidden", activo);
     if (numeroInicialContainer) numeroInicialContainer.classList.toggle("hidden", activo);
     if (tipoNumeracionLabel) {tipoNumeracionLabel.classList.toggle("hidden", activo);}
 
