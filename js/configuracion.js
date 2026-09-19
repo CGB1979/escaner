@@ -39,6 +39,8 @@ const numberingHelp = document.getElementById("numberingHelp");
 const numeroInicialContainer = document.getElementById("numeroInicialContainer");
 const filaInicialContainer = document.getElementById("filaInicialContainer");
 const filaInicial = document.getElementById("filaInicial");
+const cochesPorCarrilContainer = document.getElementById("cochesPorCarrilContainer");
+const cochesPorCarril = document.getElementById("cochesPorCarril");
 const modoContinua = document.getElementById("modoContinua");
 const modoPares = document.getElementById("modoPares");
 const modoImpares = document.getElementById("modoImpares");
@@ -82,6 +84,12 @@ cargarListasUbicacionCentralizadas();
 
 playaSelect.addEventListener("change", function() {
 
+    // La capacidad de una playa especial es temporal. Al cambiar de playa
+    // se vuelve al valor neutro de 5 y nunca se recupera desde localStorage.
+    if (typeof esPlayaEspecial === "function" && esPlayaEspecial(playaSelect.value) && cochesPorCarril) {
+        cochesPorCarril.value = "5";
+    }
+
     actualizarOpcionesPlaya();
 
     guardarConfiguracionNumeracion();
@@ -118,68 +126,63 @@ function aplicarModoEscaneoManual() {
     const manual = obtenerEscaneoManual();
     const modo = obtenerModoNumeracion();
     const esContinua = modo === "continua";
+    const esZigZag = modo === "zigzag";
+    const esJ = typeof esPlayaEspecial === "function" && esPlayaEspecial(playaSelect.value);
     const inversaContainer = document.getElementById("inversaContainer");
+    const controlesInicioRow = document.getElementById("controlesInicioRow");
 
-    // El selector del sector inferior cambia segun el tipo de numeracion:
-    // Continua -> Escaneo Manual | Pares/Impares -> Asignar a la inversa.
+    // La tercera fila de controles se adapta al modo sin mover los elementos:
+    // Continua -> Numero inicial | Coches por carril | Asignacion Manual
+    // Por fila -> Numero inicial | Fila | Asignar a la inversa
+    // ZigZag -> Numero inicial | Coches por carril
+    // Playas normales conservan su comportamiento anterior.
     if (escaneoManualContainer) {
         escaneoManualContainer.classList.toggle("hidden", !esContinua);
     }
     if (inversaContainer) {
-        inversaContainer.classList.toggle("hidden", esContinua);
+        inversaContainer.classList.toggle("hidden", esContinua || esZigZag || (esJ && modo !== "porFila"));
     }
 
-    // Escaneo Manual solo puede existir sobre Continua. Si se cambia a
-    // Pares/Impares, se desactiva para que nunca queden dos modos activos.
+    if (cochesPorCarrilContainer) {
+        cochesPorCarrilContainer.classList.toggle(
+            "hidden",
+            !esJ || manual || (modo !== "continua" && !esZigZag)
+        );
+    }
+
     if (escaneoManual && !esContinua) {
         escaneoManual.checked = false;
     }
 
     const activo = manual && esContinua;
 
-    // En modo manual se reemplaza visualmente toda la configuracion
-    // automatica por Carril + Posicion. La fila manual esta ubicada
-    // debajo de Playa/Bloque, no debajo del selector ON/OFF.
     if (numberingOptions) numberingOptions.classList.toggle("hidden", activo);
     if (numberingHelp) numberingHelp.classList.toggle("hidden", activo);
     if (numeroInicialContainer) numeroInicialContainer.classList.toggle("hidden", activo);
-    if (tipoNumeracionLabel) {tipoNumeracionLabel.classList.toggle("hidden", activo);}
+    if (tipoNumeracionLabel) tipoNumeracionLabel.classList.toggle("hidden", activo);
 
-    // Fila pertenece exclusivamente a Playa especial + Por fila y nunca
-    // debe quedar visible junto al selector de Escaneo Manual.
-    const esJ = typeof esPlayaEspecial === "function" && esPlayaEspecial(playaSelect.value);
     const mostrarFila = !activo && esJ && modo === "porFila";
     if (filaInicialContainer) filaInicialContainer.classList.toggle("hidden", !mostrarFila);
-
     if (manualLocationRow) manualLocationRow.classList.toggle("hidden", !activo);
+    if (controlesInicioRow) controlesInicioRow.classList.remove("manual-active");
 
-    const controlesInicioRow = document.getElementById("controlesInicioRow");
-    if (controlesInicioRow) controlesInicioRow.classList.toggle("manual-active", activo);
-
-    // En Continua, Asignacion Manual ocupa SIEMPRE la misma celda que
-    // Asignar a la inversa (columna derecha). Asi, ocultar Numero inicial
-    // no hace que el switch salte a la izquierda.
-    if (escaneoManualContainer) {
-        escaneoManualContainer.style.gridColumn = "2";
-        escaneoManualContainer.style.gridRow = "1";
-    }
-    if (inversaContainer) {
-        inversaContainer.style.gridColumn = "2";
-        inversaContainer.style.gridRow = "1";
+    // La grilla se organiza en numeracion.js segun los controles visibles.
+    // No fijamos columnas aqui para evitar que un modo especial herede una
+    // posicion incorrecta del switch.
+    if (typeof organizarControlesInicio === "function") {
+        organizarControlesInicio();
     }
 
-    // El titulo general sigue siendo "Tipo de numeracion"; "Escaneo Manual"
-    // es el nombre del sector con su switch, no reemplaza ese encabezado.
-    // if (tipoNumeracionLabel) tipoNumeracionLabel.textContent = "Tipo de numeracion";
-
-    // Evita el parpadeo inicial mostrando por un instante el control
-    // incorrecto antes de que JS determine Continua vs Pares/Impares.
     const configGroup = document.getElementById("configNumeracionGroup");
     if (configGroup) configGroup.classList.add("config-numeracion-ready");
 
     if (activo) {
         if (manualCarril && (!manualCarril.value || Number(manualCarril.value) < 1)) manualCarril.value = 1;
         if (manualPosicion && (!manualPosicion.value || Number(manualPosicion.value) < 1)) manualPosicion.value = 1;
+    }
+
+    if (typeof actualizarFilaSegunCapacidad === "function") {
+        actualizarFilaSegunCapacidad();
     }
 }
 

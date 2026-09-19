@@ -712,7 +712,7 @@ if (cochesPorCarril) {
 function actualizarAyudaNumeracion() {
 
     if (typeof obtenerEscaneoManual === "function" && obtenerEscaneoManual()) {
-        numberingHelp.innerText = "Seleccione una ubicación para el vehículo.\nLas posiciones ocupadas no se pueden asignar.";
+        numberingHelp.innerText = "Escaneo manual: la ubicacion se define con Carril y Posicion antes de escanear.";
         return;
     }
 
@@ -734,9 +734,10 @@ function actualizarAyudaNumeracion() {
         if (modo === "continua") {
 
             const capacidad = obtenerCochesPorCarril();
+            const ejemplo = Array.from({ length: Math.min(capacidad, 4) }, (_, i) => `${inicio}-${i + 1}`).join(", ");
 
             numberingHelp.innerText =
-                `Se asignará: carril ${inicio}, posiciones 1 a ${capacidad}.\nLuego continuará con el siguiente carril.`;
+                `Se asignara ${ejemplo}${capacidad > 4 ? ", ..." : ""} y luego ${inicio + 1}-1, ${inicio + 1}-2...`;
 
             numberingHelp.classList.add("editable-j");
             return;
@@ -750,7 +751,7 @@ function actualizarAyudaNumeracion() {
             const siguienteAbajo = `${inicio + 1}-${capacidad} → ${inicio + 1}-1`;
 
             numberingHelp.innerText =
-                `ZigZag: ${inicioArriba}, luego ${siguienteAbajo}.\nContinuará alternando el sentido en cada carril.`;
+                `ZigZag: ${inicioArriba}, luego ${siguienteAbajo}, y asi sucesivamente.`;
 
             numberingHelp.classList.add("editable-j");
             return;
@@ -764,10 +765,8 @@ function actualizarAyudaNumeracion() {
 
             numberingHelp.innerText =
                 inversa
-                    ? inicio === 1
-                        ? `Fila ${fila}: se escaneará en inversa desde la posición 1.\nNo existen posiciones menores a 1 para asignar.`
-                        : `Inversa: fila ${fila}, desde ${inicio}-${fila} hasta 1-${fila}.\nLa asignación no continuará más allá de la posición 1.`
-                    : `Fila ${fila}: ${inicio}-${fila}, ${inicio + 1}-${fila}, ${inicio + 2}-${fila}...\nLa asignación continuará en orden ascendente.`;
+                    ? `Se escaneara la fila ${fila}: ${inicio}-${fila}, ${inicio - 1}-${fila}, ${inicio - 2}-${fila}, ${inicio - 3}-${fila}...`
+                    : `Se escaneara la fila ${fila}: ${inicio}-${fila}, ${inicio + 1}-${fila}, ${inicio + 2}-${fila}, ${inicio + 3}-${fila}...`;
 
             numberingHelp.classList.add(
                 "editable-j"
@@ -790,8 +789,8 @@ function actualizarAyudaNumeracion() {
 
         numberingHelp.innerText =
             inversa
-                ? `Se asignará ${inicio}, ${inicio - 1}, ${inicio - 2}, ${inicio - 3}...\nLa asignación continuará en orden descendente.`
-                : `Se asignará ${inicio}, ${inicio + 1}, ${inicio + 2}, ${inicio + 3}...\nLa asignación continuará en orden ascendente.`;
+                ? `Se asignara ${inicio}, ${inicio - 1}, ${inicio - 2}, ${inicio - 3}...`
+                : `Se asignara ${inicio}, ${inicio + 1}, ${inicio + 2}, ${inicio + 3}...`;
 
         return;
 
@@ -810,7 +809,7 @@ function actualizarAyudaNumeracion() {
             : 2;
 
     numberingHelp.innerText =
-        `Se asignará ${primero}, ${primero + paso}, ${primero + paso * 2}, ${primero + paso * 3}...\nLa asignación continuará siguiendo la numeración seleccionada.`;
+        `Se asignara ${primero}, ${primero + paso}, ${primero + paso * 2}, ${primero + paso * 3}...`;
 
 }
 

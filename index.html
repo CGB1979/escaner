@@ -43,6 +43,14 @@
 <div class="numbering-help" id="numberingHelp">Se asignara 1, 2, 3, 4...</div>
 <div class="start-number-row" id="controlesInicioRow">
 <div class="start-number-container" id="numeroInicialContainer"><!-- EDITABLE: nombre del campo --> <label for="numeroInicial">Numero inicial</label>  <input type="number" id="numeroInicial" min="1" step="1" value="1" /></div>
+<div class="start-number-container hidden" id="cochesPorCarrilContainer"><label for="cochesPorCarril">Coches por carril</label><select id="cochesPorCarril">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5" selected>5</option>
+<option value="6">6</option>
+</select></div>
 <div class="start-number-container inverse-number-container" id="inversaContainer"><label for="asignarInversa">Asignar a la inversa</label><label class="switch"><input type="checkbox" id="asignarInversa"><span class="slider"></span></label></div>
 <div class="start-number-container manual-scan-container hidden" id="escaneoManualContainer"><label for="escaneoManual">Asignación Manual</label><label class="switch"><input type="checkbox" id="escaneoManual"><span class="slider"></span></label></div>
 <div class="start-number-container hidden" id="filaInicialContainer"><!-- EDITABLE: nombre del campo --> <label for="filaInicial">Fila</label>  <select id="filaInicial">
@@ -51,6 +59,7 @@
 <option value="3">Fila 3</option>
 <option value="4">Fila 4</option>
 <option value="5">Fila 5</option>
+<option value="6">Fila 6</option>
 </select></div>
 </div>
 <!-- EDITABLE: texto del boton --> <button class="btn-primary big-button" onclick="abrirScanner()"> ESCANEAR VEHiCULO </button>
@@ -156,6 +165,7 @@
 <option value="3">3</option>
 <option value="4">4</option>
 <option value="5">5</option>
+<option value="6">6</option>
 </select></div>
 </div>
 <!-- EDITABLE: texto de vista previa -->
